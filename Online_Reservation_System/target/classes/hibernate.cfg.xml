@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "https://hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+
+    <session-factory>
+
+        <!-- MySQL Connection -->
+        <property name="hibernate.connection.driver_class">
+            com.mysql.cj.jdbc.Driver
+        </property>
+
+        <property name="hibernate.connection.url">
+            jdbc:mysql://localhost:3306/online_reservation
+        </property>
+
+        <property name="hibernate.connection.username">
+            root
+        </property>
+
+        <property name="hibernate.connection.password">
+            // Enter you Mysql database password here
+        </property>
+
+        <!-- MySQL Dialect -->
+        <property name="hibernate.dialect">
+            org.hibernate.dialect.MySQLDialect
+        </property>
+
+        <!-- Show SQL in Eclipse console -->
+        <property name="hibernate.show_sql">
+            true
+        </property>
+
+        <!-- Format SQL -->
+        <property name="hibernate.format_sql">
+            true
+        </property>
+
+        <!-- Entity -->
+        <mapping class="com.oibsip.reservation.entity.User"/>
+	<mapping class="com.oibsip.reservation.entity.Train"/>
+	<mapping class="com.oibsip.reservation.entity.Reservation"/>
+
+    </session-factory>
+
+</hibernate-configuration>
