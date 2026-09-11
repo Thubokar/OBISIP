@@ -1,0 +1,1586 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0">
+
+    <title>Dashboard | Library Management System</title>
+
+    <link
+            rel="stylesheet"
+            th:href="@{/css/style.css}">
+
+    <style>
+        /* =========================================================
+           DASHBOARD PAGE
+           ========================================================= */
+
+        .dashboard-page {
+            min-height: 100vh;
+
+            background:
+                radial-gradient(
+                    circle at 92% 8%,
+                    rgba(15, 118, 110, 0.055),
+                    transparent 24%
+                ),
+                var(--background);
+        }
+
+
+        /* =========================================================
+           NAVBAR
+           ========================================================= */
+
+        .dashboard-navbar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .dashboard-navbar .navbar-inner {
+            min-height: 68px;
+        }
+
+        .dashboard-nav-actions {
+            display: flex;
+            align-items: center;
+
+            gap: 6px;
+
+            margin-left: auto;
+        }
+
+        .dashboard-nav-user {
+            display: flex;
+            align-items: center;
+
+            gap: 9px;
+
+            margin-left: 10px;
+
+            padding-left: 15px;
+
+            border-left: 1px solid var(--border);
+        }
+
+        .dashboard-user-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            width: 34px;
+            height: 34px;
+
+            flex: 0 0 auto;
+
+            background: var(--primary-light);
+
+            border: 1px solid var(--primary-border);
+            border-radius: 10px;
+
+            color: var(--primary-dark);
+
+            font-size: 14px;
+        }
+
+        .dashboard-user-info {
+            min-width: 0;
+        }
+
+        .dashboard-user-label {
+            display: block;
+
+            color: var(--text-muted);
+
+            font-size: 9px;
+            font-weight: 800;
+
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+
+            line-height: 1.2;
+        }
+
+        .dashboard-user-email {
+            display: block;
+
+            max-width: 210px;
+
+            overflow: hidden;
+
+            color: var(--text-primary);
+
+            font-size: 12px;
+            font-weight: 700;
+
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .logout-form {
+            margin-left: 4px;
+        }
+
+        .logout-button {
+            min-height: 36px;
+
+            padding: 7px 10px;
+
+            background: transparent;
+
+            border-color: transparent;
+
+            color: var(--text-secondary);
+
+            box-shadow: none;
+        }
+
+        .logout-button:hover {
+            background: var(--danger-light);
+
+            border-color: var(--danger-border);
+
+            color: var(--danger);
+
+            box-shadow: none;
+        }
+
+
+        /* =========================================================
+           MAIN
+           ========================================================= */
+
+        .dashboard-main {
+            padding-bottom: 55px;
+        }
+
+        .dashboard-container {
+            padding-top: 32px;
+        }
+
+
+        /* =========================================================
+           HERO HEADER
+           ========================================================= */
+
+        .dashboard-hero {
+            position: relative;
+
+            overflow: hidden;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 28px;
+
+            padding: 30px 32px;
+
+            margin-bottom: 25px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #134e4a 0%,
+                    #0f766e 55%,
+                    #115e59 100%
+                );
+
+            border-radius: var(--radius-xl);
+
+            box-shadow:
+                0 16px 36px rgba(15, 118, 110, 0.16);
+        }
+
+        .dashboard-hero::before {
+            content: "";
+
+            position: absolute;
+
+            width: 250px;
+            height: 250px;
+
+            top: -150px;
+            right: -60px;
+
+            border-radius: 50%;
+
+            background:
+                rgba(255, 255, 255, 0.08);
+        }
+
+        .dashboard-hero::after {
+            content: "";
+
+            position: absolute;
+
+            width: 170px;
+            height: 170px;
+
+            right: 130px;
+            bottom: -125px;
+
+            border-radius: 50%;
+
+            background:
+                rgba(217, 119, 6, 0.17);
+        }
+
+        .dashboard-hero-copy,
+        .dashboard-hero-badge {
+            position: relative;
+            z-index: 1;
+        }
+
+        .dashboard-eyebrow {
+            margin-bottom: 7px;
+
+            color:
+                rgba(255, 255, 255, 0.72);
+
+            font-size: 10px;
+            font-weight: 800;
+
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        .dashboard-hero h1 {
+            margin: 0 0 7px;
+
+            color: #ffffff;
+
+            font-size: clamp(28px, 3vw, 36px);
+
+            letter-spacing: -0.035em;
+        }
+
+        .dashboard-hero p {
+            max-width: 720px;
+
+            margin: 0;
+
+            color:
+                rgba(255, 255, 255, 0.78);
+
+            font-size: 13px;
+            line-height: 1.65;
+        }
+
+        .dashboard-hero-badge {
+            flex: 0 0 auto;
+
+            display: inline-flex;
+            align-items: center;
+
+            gap: 9px;
+
+            padding: 11px 14px;
+
+            background:
+                rgba(255, 255, 255, 0.10);
+
+            border:
+                1px solid rgba(255, 255, 255, 0.16);
+
+            border-radius: 12px;
+
+            color: #ffffff;
+
+            font-size: 12px;
+            font-weight: 750;
+
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .dashboard-hero-badge-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            width: 30px;
+            height: 30px;
+
+            background:
+                rgba(255, 255, 255, 0.12);
+
+            border-radius: 8px;
+        }
+
+
+        /* =========================================================
+           SECTION
+           ========================================================= */
+
+        .dashboard-section {
+            margin-top: 26px;
+        }
+
+        .dashboard-section-header {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+
+            gap: 18px;
+
+            margin-bottom: 14px;
+        }
+
+        .dashboard-section-title {
+            margin: 0 0 3px;
+
+            font-size: 20px;
+        }
+
+        .dashboard-section-description {
+            margin: 0;
+
+            color: var(--text-muted);
+
+            font-size: 12px;
+        }
+
+
+        /* =========================================================
+           STATUS GRID
+           ========================================================= */
+
+        .dashboard-status-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, minmax(0, 1fr));
+
+            gap: 14px;
+        }
+
+        .dashboard-status-card {
+            position: relative;
+
+            overflow: hidden;
+
+            min-height: 118px;
+
+            padding: 18px;
+
+            background: var(--surface);
+
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+
+            box-shadow: var(--shadow-sm);
+
+            transition:
+                transform var(--transition),
+                border-color var(--transition),
+                box-shadow var(--transition);
+        }
+
+        .dashboard-status-card:hover {
+            transform: translateY(-2px);
+
+            border-color: var(--primary-border);
+
+            box-shadow: var(--shadow-md);
+        }
+
+        .dashboard-status-card::after {
+            content: "";
+
+            position: absolute;
+
+            width: 70px;
+            height: 70px;
+
+            top: 0;
+            right: 0;
+
+            background:
+                rgba(15, 118, 110, 0.045);
+
+            border-radius:
+                0 0 0 70px;
+        }
+
+        .status-card-top {
+            position: relative;
+            z-index: 1;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 12px;
+
+            margin-bottom: 10px;
+        }
+
+        .status-card-label {
+            color: var(--text-muted);
+
+            font-size: 10px;
+            font-weight: 800;
+
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+        }
+
+        .status-card-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            width: 32px;
+            height: 32px;
+
+            background: var(--primary-light);
+
+            border: 1px solid rgba(15, 118, 110, 0.10);
+            border-radius: 9px;
+
+            font-size: 14px;
+        }
+
+        .status-card-value {
+            position: relative;
+            z-index: 1;
+
+            margin: 0;
+
+            color: var(--text-heading);
+
+            font-size: 29px;
+            font-weight: 800;
+
+            line-height: 1;
+
+            letter-spacing: -0.035em;
+        }
+
+        .status-card-description {
+            position: relative;
+            z-index: 1;
+
+            margin: 7px 0 0;
+
+            color: var(--text-muted);
+
+            font-size: 11px;
+        }
+
+
+        /* =========================================================
+           SERVICE GRID
+           ========================================================= */
+
+        .dashboard-service-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, minmax(0, 1fr));
+
+            gap: 14px;
+        }
+
+        .dashboard-service-card {
+            display: grid;
+
+            grid-template-columns:
+                46px minmax(0, 1fr);
+
+            grid-template-rows:
+                auto auto auto;
+
+            column-gap: 13px;
+
+            min-height: 122px;
+
+            padding: 17px 18px;
+
+            background: var(--surface);
+
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+
+            color: inherit;
+
+            box-shadow: var(--shadow-sm);
+
+            transition:
+                transform var(--transition),
+                border-color var(--transition),
+                box-shadow var(--transition),
+                background-color var(--transition);
+        }
+
+        .dashboard-service-card:hover {
+            transform: translateY(-3px);
+
+            background: #ffffff;
+
+            border-color: var(--primary-border);
+
+            color: inherit;
+
+            box-shadow: var(--shadow-md);
+        }
+
+        .service-card-icon {
+            grid-row: 1 / span 3;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            width: 46px;
+            height: 46px;
+
+            background: var(--primary-light);
+
+            border: 1px solid rgba(15, 118, 110, 0.10);
+            border-radius: 12px;
+
+            color: var(--primary-dark);
+
+            font-size: 19px;
+        }
+
+        .dashboard-service-card h3 {
+            margin: 1px 0 5px;
+
+            color: var(--text-heading);
+
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        .dashboard-service-card p {
+            margin: 0;
+
+            color: var(--text-muted);
+
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+        .service-card-link {
+            margin-top: 8px;
+
+            color: var(--primary);
+
+            font-size: 10px;
+            font-weight: 800;
+        }
+
+
+        /* =========================================================
+           ADMIN SECTION
+           ========================================================= */
+
+        .admin-section {
+            padding: 21px;
+
+            background:
+                linear-gradient(
+                    180deg,
+                    rgba(255, 247, 237, 0.72),
+                    rgba(255, 253, 248, 0.92)
+                );
+
+            border: 1px solid var(--accent-border);
+            border-radius: var(--radius-xl);
+        }
+
+        .admin-section .dashboard-section-header {
+            margin-bottom: 15px;
+        }
+
+        .admin-section-heading {
+            display: flex;
+            align-items: center;
+
+            gap: 8px;
+        }
+
+        .admin-label {
+            display: inline-flex;
+            align-items: center;
+
+            padding: 4px 8px;
+
+            background: var(--accent-light);
+
+            border: 1px solid var(--accent-border);
+            border-radius: var(--radius-pill);
+
+            color: var(--accent-dark);
+
+            font-size: 9px;
+            font-weight: 800;
+
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        .admin-service-card {
+            background: rgba(255, 255, 255, 0.84);
+        }
+
+        .admin-service-card .service-card-icon {
+            background: var(--accent-light);
+
+            border-color: var(--accent-border);
+
+            color: var(--accent-dark);
+        }
+
+        .admin-service-card .service-card-link {
+            color: var(--accent-dark);
+        }
+
+        .admin-service-card:hover {
+            border-color: var(--accent-border);
+        }
+
+
+        /* =========================================================
+           RESPONSIVE
+           ========================================================= */
+
+        @media (max-width: 1050px) {
+
+            .dashboard-status-grid,
+            .dashboard-service-grid {
+                grid-template-columns:
+                    repeat(2, minmax(0, 1fr));
+            }
+        }
+
+
+        @media (max-width: 820px) {
+
+            .dashboard-navbar .navbar-inner {
+                align-items: flex-start;
+
+                flex-wrap: wrap;
+
+                padding-top: 10px;
+                padding-bottom: 10px;
+            }
+
+            .dashboard-nav-actions {
+                width: 100%;
+
+                justify-content: flex-start;
+
+                overflow-x: auto;
+
+                scrollbar-width: thin;
+            }
+
+            .dashboard-nav-user {
+                margin-left: auto;
+            }
+
+            .dashboard-hero {
+                align-items: flex-start;
+
+                flex-direction: column;
+            }
+
+            .dashboard-hero-badge {
+                align-self: flex-start;
+            }
+        }
+
+
+        @media (max-width: 650px) {
+
+            .dashboard-container {
+                padding-top: 20px;
+            }
+
+            .dashboard-nav-user {
+                display: none;
+            }
+
+            .dashboard-nav-actions {
+                flex-wrap: nowrap;
+            }
+
+            .dashboard-status-grid,
+            .dashboard-service-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .dashboard-hero {
+                padding: 24px 21px;
+
+                border-radius: var(--radius-lg);
+            }
+
+            .dashboard-hero h1 {
+                font-size: 27px;
+            }
+
+            .dashboard-section-header {
+                align-items: flex-start;
+
+                flex-direction: column;
+            }
+
+            .admin-section {
+                padding: 16px;
+            }
+        }
+
+
+        @media (max-width: 480px) {
+
+            .dashboard-navbar .navbar-brand span:last-child {
+                display: none;
+            }
+
+            .dashboard-navbar .brand-icon {
+                display: inline-flex;
+            }
+
+            .dashboard-nav-actions {
+                width: auto;
+
+                margin-left: auto;
+            }
+
+            .dashboard-nav-actions .navbar-link {
+                padding-left: 8px;
+                padding-right: 8px;
+            }
+
+            .dashboard-hero-badge {
+                width: 100%;
+            }
+
+            .dashboard-service-card {
+                min-height: 116px;
+            }
+        }
+
+
+        @media (prefers-reduced-motion: reduce) {
+
+            .dashboard-status-card,
+            .dashboard-service-card {
+                transition: none;
+            }
+        }
+    </style>
+</head>
+
+
+<body class="dashboard-page">
+
+<!-- =========================================================
+     NAVBAR
+     ========================================================= -->
+
+<nav
+        class="navbar dashboard-navbar"
+        aria-label="Dashboard navigation">
+
+    <div class="navbar-inner">
+
+
+        <!-- Brand -->
+
+        <a
+                th:href="@{/}"
+                class="navbar-brand">
+
+            <span
+                    class="brand-icon"
+                    aria-hidden="true">
+                📚
+            </span>
+
+            <span>
+                Library Management System
+            </span>
+
+        </a>
+
+
+        <!-- Navigation -->
+
+        <div class="dashboard-nav-actions">
+
+
+            <a
+                    th:href="@{/books}"
+                    class="navbar-link">
+
+                Catalogue
+
+            </a>
+
+
+            <a
+                    th:href="@{/my-books}"
+                    class="navbar-link">
+
+                My Books
+
+            </a>
+
+
+            <!-- User Identity -->
+
+            <div class="dashboard-nav-user">
+
+                <span
+                        class="dashboard-user-icon"
+                        aria-hidden="true">
+                    👤
+                </span>
+
+                <div class="dashboard-user-info">
+
+                    <span class="dashboard-user-label">
+                        Signed in as
+                    </span>
+
+                    <span
+                            class="dashboard-user-email"
+                            th:text="${email}">
+                        user@example.com
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- Logout -->
+
+            <form
+                    th:action="@{/logout}"
+                    method="post"
+                    class="logout-form">
+
+                <input
+                        type="hidden"
+                        th:name="${_csrf.parameterName}"
+                        th:value="${_csrf.token}">
+
+                <button
+                        type="submit"
+                        class="btn logout-button">
+
+                    Logout
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</nav>
+
+
+<!-- =========================================================
+     MAIN
+     ========================================================= -->
+
+<main class="dashboard-main">
+
+    <div class="container dashboard-container">
+
+
+        <!-- =====================================================
+             HERO
+             ===================================================== -->
+
+        <section class="dashboard-hero">
+
+
+            <div class="dashboard-hero-copy">
+
+                <div class="dashboard-eyebrow">
+                    Library Dashboard
+                </div>
+
+                <h1>
+                    Welcome back 👋
+                </h1>
+
+                <p>
+                    Manage your library activity, discover books,
+                    review your borrowing and access administrative
+                    tools from one organized workspace.
+                </p>
+
+            </div>
+
+
+            <div class="dashboard-hero-badge">
+
+                <span
+                        class="dashboard-hero-badge-icon"
+                        aria-hidden="true">
+                    📖
+                </span>
+
+                <span>
+                    Your Library Workspace
+                </span>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             CURRENT STATUS — ADMIN ONLY
+             ===================================================== -->
+
+        <section
+                class="dashboard-section"
+                th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+
+
+            <div class="dashboard-section-header">
+
+                <div>
+
+                    <h2 class="dashboard-section-title">
+                        Current Status
+                    </h2>
+
+                    <p class="dashboard-section-description">
+                        A quick overview of current library activity.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="dashboard-status-grid">
+
+
+                <!-- Total Books -->
+
+                <article class="dashboard-status-card">
+
+                    <div class="status-card-top">
+
+                        <span class="status-card-label">
+                            Total Books
+                        </span>
+
+                        <span
+                                class="status-card-icon"
+                                aria-hidden="true">
+                            📚
+                        </span>
+
+                    </div>
+
+                    <p
+                            class="status-card-value"
+                            th:text="${totalBooks}">
+                        0
+                    </p>
+
+                    <p class="status-card-description">
+                        Books currently in the catalogue
+                    </p>
+
+                </article>
+
+
+                <!-- Issued -->
+
+                <article class="dashboard-status-card">
+
+                    <div class="status-card-top">
+
+                        <span class="status-card-label">
+                            Issued Books
+                        </span>
+
+                        <span
+                                class="status-card-icon"
+                                aria-hidden="true">
+                            📖
+                        </span>
+
+                    </div>
+
+                    <p
+                            class="status-card-value"
+                            th:text="${issuedBooks}">
+                        0
+                    </p>
+
+                    <p class="status-card-description">
+                        Books currently borrowed
+                    </p>
+
+                </article>
+
+
+                <!-- Users -->
+
+                <article class="dashboard-status-card">
+
+                    <div class="status-card-top">
+
+                        <span class="status-card-label">
+                            Registered Users
+                        </span>
+
+                        <span
+                                class="status-card-icon"
+                                aria-hidden="true">
+                            👥
+                        </span>
+
+                    </div>
+
+                    <p
+                            class="status-card-value"
+                            th:text="${totalUsers}">
+                        0
+                    </p>
+
+                    <p class="status-card-description">
+                        Active library member accounts
+                    </p>
+
+                </article>
+
+
+                <!-- Fines -->
+
+                <article class="dashboard-status-card">
+
+                    <div class="status-card-top">
+
+                        <span class="status-card-label">
+                            Unpaid Fines
+                        </span>
+
+                        <span
+                                class="status-card-icon"
+                                aria-hidden="true">
+                            ₹
+                        </span>
+
+                    </div>
+
+                    <p
+                            class="status-card-value"
+                            th:text="${unpaidFines}">
+                        0
+                    </p>
+
+                    <p class="status-card-description">
+                        Outstanding fine records
+                    </p>
+
+                </article>
+
+
+                <!-- Reservations -->
+
+                <article class="dashboard-status-card">
+
+                    <div class="status-card-top">
+
+                        <span class="status-card-label">
+                            Reservations
+                        </span>
+
+                        <span
+                                class="status-card-icon"
+                                aria-hidden="true">
+                            🔖
+                        </span>
+
+                    </div>
+
+                    <p
+                            class="status-card-value"
+                            th:text="${pendingReservations}">
+                        0
+                    </p>
+
+                    <p class="status-card-description">
+                        Pending book reservations
+                    </p>
+
+                </article>
+
+
+                <!-- Queries -->
+
+                <article class="dashboard-status-card">
+
+                    <div class="status-card-top">
+
+                        <span class="status-card-label">
+                            Queries
+                        </span>
+
+                        <span
+                                class="status-card-icon"
+                                aria-hidden="true">
+                            ✉️
+                        </span>
+
+                    </div>
+
+                    <p
+                            class="status-card-value"
+                            th:text="${pendingQueries}">
+                        0
+                    </p>
+
+                    <p class="status-card-description">
+                        Queries awaiting resolution
+                    </p>
+
+                </article>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             LIBRARY SERVICES
+             ===================================================== -->
+
+        <section class="dashboard-section">
+
+
+            <div class="dashboard-section-header">
+
+                <div>
+
+                    <h2 class="dashboard-section-title">
+                        Library Services
+                    </h2>
+
+                    <p class="dashboard-section-description">
+                        Everything you need for your day-to-day
+                        library activity.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="dashboard-service-grid">
+
+
+                <!-- Catalogue -->
+
+                <a
+                        th:href="@{/books}"
+                        class="dashboard-service-card">
+
+                    <span
+                            class="service-card-icon"
+                            aria-hidden="true">
+                        📚
+                    </span>
+
+                    <h3>
+                        Book Catalogue
+                    </h3>
+
+                    <p>
+                        Browse the collection and find books
+                        by title, author or category.
+                    </p>
+
+                    <span class="service-card-link">
+                        Explore Catalogue →
+                    </span>
+
+                </a>
+
+
+                <!-- My Books -->
+
+                <a
+                        th:href="@{/my-books}"
+                        class="dashboard-service-card">
+
+                    <span
+                            class="service-card-icon"
+                            aria-hidden="true">
+                        📖
+                    </span>
+
+                    <h3>
+                        My Books
+                    </h3>
+
+                    <p>
+                        Review issued books, due dates
+                        and your borrowing activity.
+                    </p>
+
+                    <span class="service-card-link">
+                        View My Books →
+                    </span>
+
+                </a>
+
+
+                <!-- My Fines -->
+
+                <a
+                        th:href="@{/user/fines}"
+                        class="dashboard-service-card"
+                        th:if="${#authorization.expression('hasRole(''USER'')')}">
+
+                    <span
+                            class="service-card-icon"
+                            aria-hidden="true">
+                        ₹
+                    </span>
+
+                    <h3>
+                        My Fines
+                    </h3>
+
+                    <p>
+                        Review fine amounts and current
+                        payment status.
+                    </p>
+
+                    <span class="service-card-link">
+                        View Fines →
+                    </span>
+
+                </a>
+
+
+                <!-- My Reservations -->
+
+                <a
+                        th:href="@{/user/reservations}"
+                        class="dashboard-service-card"
+                        th:if="${#authorization.expression('hasRole(''USER'')')}">
+
+                    <span
+                            class="service-card-icon"
+                            aria-hidden="true">
+                        🔖
+                    </span>
+
+                    <h3>
+                        My Reservations
+                    </h3>
+
+                    <p>
+                        Track the status of books
+                        you have reserved.
+                    </p>
+
+                    <span class="service-card-link">
+                        View Reservations →
+                    </span>
+
+                </a>
+
+
+                <!-- Contact -->
+
+                <a
+                        th:href="@{/contact}"
+                        class="dashboard-service-card">
+
+                    <span
+                            class="service-card-icon"
+                            aria-hidden="true">
+                        ✉️
+                    </span>
+
+                    <h3>
+                        Contact Library
+                    </h3>
+
+                    <p>
+                        Send a question directly to
+                        the library administration.
+                    </p>
+
+                    <span class="service-card-link">
+                        Contact Library →
+                    </span>
+
+                </a>
+
+
+                <!-- My Queries -->
+
+                <a
+                        th:href="@{/my-queries}"
+                        class="dashboard-service-card"
+                        th:if="${#authorization.expression('hasRole(''USER'')')}">
+
+                    <span
+                            class="service-card-icon"
+                            aria-hidden="true">
+                        💬
+                    </span>
+
+                    <h3>
+                        My Queries
+                    </h3>
+
+                    <p>
+                        Review your submitted queries
+                        and resolution status.
+                    </p>
+
+                    <span class="service-card-link">
+                        View Queries →
+                    </span>
+
+                </a>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             ADMINISTRATION — ADMIN ONLY
+             ===================================================== -->
+
+        <section
+                class="dashboard-section admin-section"
+                th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+
+
+            <div class="dashboard-section-header">
+
+                <div>
+
+                    <div class="admin-section-heading">
+
+                        <h2 class="dashboard-section-title">
+                            Administration
+                        </h2>
+
+                        <span class="admin-label">
+                            Admin
+                        </span>
+
+                    </div>
+
+                    <p class="dashboard-section-description">
+                        Manage library resources, members and
+                        operational records.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="dashboard-service-grid">
+
+
+                <!-- Books -->
+
+                <a
+                        th:href="@{/admin/books}"
+                        class="dashboard-service-card admin-service-card">
+
+                    <span
+                            class="service-card-icon"
+                            aria-hidden="true">
+                        📚
+                    </span>
+
+                    <h3>
+                        Manage Books
+                    </h3>
+
+                    <p>
+                        Add, update and maintain
+                        catalogue inventory.
+                    </p>
+
+                    <span class="service-card-link">
+                        Manage Books →
+                    </span>
+
+                </a>
+
+
+                <!-- Issued Books -->
+
+                <a
+                        th:href="@{/admin/issued-books}"
+                        class="dashboard-service-card admin-service-card">
+
+                    <span
+                            class="service-card-icon"
+                            aria-hidden="true">
+                        📋
+                    </span>
+
+                    <h3>
+                        Issued Books
+                    </h3>
+
+                    <p>
+                        Monitor books currently
+                        issued to members.
+                    </p>
+
+                    <span class="service-card-link">
+                        View Issues →
+                    </span>
+
+                </a>
+
+
+                <!-- Users -->
+
+                <a
+                        th:href="@{/admin/users}"
+                        class="dashboard-service-card admin-service-card">
+
+                    <span
+                            class="service-card-icon"
+                            aria-hidden="true">
+                        👥
+                    </span>
+
+                    <h3>
+                        Manage Users
+                    </h3>
+
+                    <p>
+                        Review and manage registered
+                        library member accounts.
+                    </p>
+
+                    <span class="service-card-link">
+                        Manage Users →
+                    </span>
+
+                </a>
+
+
+                <!-- Fines -->
+
+                <a
+                        th:href="@{/admin/fines}"
+                        class="dashboard-service-card admin-service-card">
+
+                    <span
+                            class="service-card-icon"
+                            aria-hidden="true">
+                        ₹
+                    </span>
+
+                    <h3>
+                        Manage Fines
+                    </h3>
+
+                    <p>
+                        Review overdue fines and
+                        update payment status.
+                    </p>
+
+                    <span class="service-card-link">
+                        Manage Fines →
+                    </span>
+
+                </a>
+
+
+                <!-- Reservations -->
+
+                <a
+                        th:href="@{/admin/reservations}"
+                        class="dashboard-service-card admin-service-card">
+
+                    <span
+                            class="service-card-icon"
+                            aria-hidden="true">
+                        🔖
+                    </span>
+
+                    <h3>
+                        Reservations
+                    </h3>
+
+                    <p>
+                        Review and fulfil pending
+                        book reservations.
+                    </p>
+
+                    <span class="service-card-link">
+                        Manage Reservations →
+                    </span>
+
+                </a>
+
+
+                <!-- Contact -->
+
+                <a
+                        th:href="@{/admin/contact}"
+                        class="dashboard-service-card admin-service-card">
+
+                    <span
+                            class="service-card-icon"
+                            aria-hidden="true">
+                        ✉️
+                    </span>
+
+                    <h3>
+                        Contact Queries
+                    </h3>
+
+                    <p>
+                        Review questions submitted
+                        by library members.
+                    </p>
+
+                    <span class="service-card-link">
+                        View Queries →
+                    </span>
+
+                </a>
+
+            </div>
+
+        </section>
+
+    </div>
+
+</main>
+
+</body>
+
+</html>

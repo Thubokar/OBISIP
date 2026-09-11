@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0">
+
+    <meta
+            name="description"
+            content="Manage registered users and account access in the Library Management System.">
+
+    <title>User Management | Admin</title>
+
+    <link
+            rel="stylesheet"
+            th:href="@{/css/style.css}">
+
+    <style>
+        /* =========================================================
+           ADMIN USER MANAGEMENT
+           ========================================================= */
+
+        .admin-users-page {
+            min-height: 100vh;
+
+            background:
+                radial-gradient(
+                    circle at 94% 7%,
+                    rgba(217, 119, 6, 0.045),
+                    transparent 22%
+                ),
+                var(--background);
+        }
+
+
+        /* =========================================================
+           NAVBAR
+           ========================================================= */
+
+        .admin-users-navbar .navbar-inner {
+            min-height: 68px;
+        }
+
+        .admin-users-nav {
+            display: flex;
+            align-items: center;
+
+            gap: 6px;
+
+            margin-left: auto;
+        }
+
+        .admin-users-nav .active {
+            background: var(--accent-light);
+
+            color: var(--accent-dark);
+        }
+
+
+        /* =========================================================
+           PAGE
+           ========================================================= */
+
+        .admin-users-container {
+            padding-top: 30px;
+        }
+
+
+        /* =========================================================
+           HERO
+           ========================================================= */
+
+        .admin-users-hero {
+            position: relative;
+
+            overflow: hidden;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 24px;
+
+            padding: 29px 31px;
+
+            margin-bottom: 21px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #134e4a 0%,
+                    #0f766e 54%,
+                    #115e59 100%
+                );
+
+            border-radius: var(--radius-xl);
+
+            box-shadow:
+                0 16px 34px rgba(15, 118, 110, 0.15);
+        }
+
+        .admin-users-hero::before {
+            content: "";
+
+            position: absolute;
+
+            width: 230px;
+            height: 230px;
+
+            top: -145px;
+            right: -55px;
+
+            border-radius: 50%;
+
+            background:
+                rgba(255, 255, 255, 0.075);
+        }
+
+        .admin-users-hero::after {
+            content: "";
+
+            position: absolute;
+
+            width: 150px;
+            height: 150px;
+
+            right: 120px;
+            bottom: -105px;
+
+            border-radius: 50%;
+
+            background:
+                rgba(217, 119, 6, 0.18);
+        }
+
+        .admin-users-hero-copy,
+        .admin-users-hero-actions {
+            position: relative;
+            z-index: 1;
+        }
+
+        .admin-users-eyebrow {
+            margin-bottom: 7px;
+
+            color:
+                rgba(255, 255, 255, 0.72);
+
+            font-size: 10px;
+            font-weight: 800;
+
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        .admin-users-hero h1 {
+            margin: 0 0 7px;
+
+            color: #ffffff;
+
+            font-size: clamp(28px, 3vw, 35px);
+
+            letter-spacing: -0.035em;
+        }
+
+        .admin-users-hero p {
+            max-width: 680px;
+
+            margin: 0;
+
+            color:
+                rgba(255, 255, 255, 0.78);
+
+            font-size: 13px;
+            line-height: 1.65;
+        }
+
+        .admin-users-hero-actions {
+            flex: 0 0 auto;
+        }
+
+        .admin-dashboard-button {
+            background:
+                rgba(255, 255, 255, 0.08);
+
+            border-color:
+                rgba(255, 255, 255, 0.25);
+
+            color: #ffffff;
+
+            box-shadow: none;
+        }
+
+        .admin-dashboard-button:hover {
+            background:
+                rgba(255, 255, 255, 0.14);
+
+            border-color:
+                rgba(255, 255, 255, 0.36);
+
+            color: #ffffff;
+
+            box-shadow: none;
+        }
+
+
+        /* =========================================================
+           ALERTS
+           ========================================================= */
+
+        .admin-users-alerts {
+            margin-bottom: 18px;
+        }
+
+        .admin-users-alerts .alert {
+            margin: 0 0 9px;
+        }
+
+        .admin-users-alerts .alert:last-child {
+            margin-bottom: 0;
+        }
+
+
+        /* =========================================================
+           TOOLBAR
+           ========================================================= */
+
+        .users-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 16px;
+
+            margin-bottom: 15px;
+        }
+
+        .users-toolbar-copy h2 {
+            margin: 0 0 3px;
+
+            font-size: 19px;
+        }
+
+        .users-toolbar-copy p {
+            margin: 0;
+
+            font-size: 11px;
+        }
+
+        .user-count {
+            display: inline-flex;
+            align-items: center;
+
+            gap: 6px;
+
+            padding: 6px 10px;
+
+            background: var(--accent-light);
+
+            border: 1px solid var(--accent-border);
+            border-radius: var(--radius-pill);
+
+            color: var(--accent-dark);
+
+            font-size: 10px;
+            font-weight: 800;
+
+            white-space: nowrap;
+        }
+
+
+        /* =========================================================
+           TABLE CARD
+           ========================================================= */
+
+        .users-table-card {
+            overflow: hidden;
+
+            background: var(--surface);
+
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+
+            box-shadow: var(--shadow-sm);
+        }
+
+        .users-table-wrap {
+            width: 100%;
+
+            overflow-x: auto;
+
+            scrollbar-width: thin;
+        }
+
+        .users-table {
+            min-width: 1080px;
+
+            border: 0;
+            border-radius: 0;
+        }
+
+        .users-table th:first-child,
+        .users-table td:first-child {
+            padding-left: 22px;
+        }
+
+        .users-table th:last-child,
+        .users-table td:last-child {
+            padding-right: 22px;
+        }
+
+        .user-id {
+            color: var(--text-muted);
+
+            font-size: 11px;
+            font-weight: 750;
+        }
+
+        .user-name-cell {
+            min-width: 180px;
+        }
+
+        .user-name-wrap {
+            display: flex;
+            align-items: center;
+
+            gap: 10px;
+        }
+
+        .user-avatar {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            width: 36px;
+            height: 36px;
+
+            flex: 0 0 auto;
+
+            background: var(--primary-light);
+
+            border: 1px solid var(--primary-border);
+            border-radius: 10px;
+
+            color: var(--primary-dark);
+
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        .user-name {
+            color: var(--text-heading);
+
+            font-weight: 750;
+        }
+
+        .user-email {
+            color: var(--text-secondary);
+
+            font-size: 12px;
+        }
+
+        .user-created {
+            color: var(--text-primary);
+
+            font-size: 12px;
+            font-weight: 650;
+
+            white-space: nowrap;
+        }
+
+
+        /* =========================================================
+           ROLE BADGES
+           ========================================================= */
+
+        .role-badge {
+            display: inline-flex;
+            align-items: center;
+
+            gap: 5px;
+
+            padding: 5px 9px;
+
+            border-radius: var(--radius-pill);
+
+            font-size: 10px;
+            font-weight: 800;
+
+            white-space: nowrap;
+        }
+
+        .role-badge.admin {
+            background: var(--accent-light);
+
+            border: 1px solid var(--accent-border);
+
+            color: var(--accent-dark);
+        }
+
+        .role-badge.user {
+            background: var(--primary-light);
+
+            border: 1px solid var(--primary-border);
+
+            color: var(--primary-dark);
+        }
+
+
+        /* =========================================================
+           ACCOUNT STATUS
+           ========================================================= */
+
+        .account-status {
+            display: inline-flex;
+            align-items: center;
+
+            gap: 6px;
+
+            padding: 5px 9px;
+
+            border-radius: var(--radius-pill);
+
+            font-size: 10px;
+            font-weight: 800;
+
+            white-space: nowrap;
+        }
+
+        .account-status::before {
+            content: "";
+
+            width: 6px;
+            height: 6px;
+
+            border-radius: 50%;
+
+            background: currentColor;
+        }
+
+        .account-status.enabled {
+            background: var(--success-light);
+
+            border: 1px solid var(--success-border);
+
+            color: var(--success-dark);
+        }
+
+        .account-status.disabled {
+            background: var(--danger-light);
+
+            border: 1px solid var(--danger-border);
+
+            color: var(--danger-dark);
+        }
+
+
+        /* =========================================================
+           ACTIONS
+           ========================================================= */
+
+        .user-actions {
+            display: flex;
+            align-items: center;
+
+            gap: 7px;
+
+            flex-wrap: wrap;
+
+            min-width: 250px;
+        }
+
+        .user-actions form {
+            display: inline-flex;
+        }
+
+        .action-button {
+            min-height: 34px;
+
+            padding: 7px 10px;
+
+            font-size: 11px;
+        }
+
+        .edit-user-button {
+            background: var(--surface);
+
+            border-color: var(--border-dark);
+
+            color: var(--text-primary);
+
+            box-shadow: none;
+        }
+
+        .edit-user-button:hover {
+            background: var(--primary-light);
+
+            border-color: var(--primary-border);
+
+            color: var(--primary-dark);
+
+            box-shadow: none;
+        }
+
+        .disable-user-button {
+            background: var(--warning-light);
+
+            border-color: var(--warning-border);
+
+            color: var(--warning-dark);
+
+            box-shadow: none;
+        }
+
+        .disable-user-button:hover {
+            background: var(--warning);
+
+            border-color: var(--warning);
+
+            color: #ffffff;
+
+            box-shadow:
+                0 4px 10px rgba(180, 83, 9, 0.14);
+        }
+
+        .enable-user-button {
+            background: var(--success-light);
+
+            border-color: var(--success-border);
+
+            color: var(--success-dark);
+
+            box-shadow: none;
+        }
+
+        .enable-user-button:hover {
+            background: var(--success);
+
+            border-color: var(--success);
+
+            color: #ffffff;
+
+            box-shadow:
+                0 4px 10px rgba(21, 128, 61, 0.14);
+        }
+
+        .delete-user-button {
+            background: var(--danger-light);
+
+            border-color: var(--danger-border);
+
+            color: var(--danger-dark);
+
+            box-shadow: none;
+        }
+
+        .delete-user-button:hover {
+            background: var(--danger);
+
+            border-color: var(--danger);
+
+            color: #ffffff;
+
+            box-shadow:
+                0 4px 10px rgba(220, 38, 38, 0.14);
+        }
+
+        .admin-protected {
+            display: inline-flex;
+            align-items: center;
+
+            gap: 6px;
+
+            padding: 6px 9px;
+
+            background: var(--surface-soft);
+
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+
+            color: var(--text-muted);
+
+            font-size: 10px;
+            font-weight: 750;
+
+            white-space: nowrap;
+        }
+
+
+        /* =========================================================
+           EMPTY STATE
+           ========================================================= */
+
+        .users-empty {
+            padding: 62px 25px;
+
+            text-align: center;
+        }
+
+        .users-empty-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            width: 72px;
+            height: 72px;
+
+            margin-bottom: 16px;
+
+            background: var(--primary-light);
+
+            border: 1px solid var(--primary-border);
+            border-radius: 50%;
+
+            color: var(--primary-dark);
+
+            font-size: 29px;
+        }
+
+        .users-empty h2 {
+            margin-bottom: 7px;
+
+            font-size: 21px;
+        }
+
+        .users-empty p {
+            max-width: 480px;
+
+            margin: 0 auto;
+
+            font-size: 12px;
+        }
+
+
+        /* =========================================================
+           INFO GRID
+           ========================================================= */
+
+        .admin-users-info {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, minmax(0, 1fr));
+
+            gap: 12px;
+
+            margin-top: 20px;
+        }
+
+        .admin-info-card {
+            display: flex;
+            align-items: flex-start;
+
+            gap: 11px;
+
+            padding: 15px;
+
+            background: var(--surface-soft);
+
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+        }
+
+        .admin-info-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            width: 34px;
+            height: 34px;
+
+            flex: 0 0 auto;
+
+            background: var(--accent-light);
+
+            border-radius: 9px;
+
+            color: var(--accent-dark);
+
+            font-size: 14px;
+        }
+
+        .admin-info-card h3 {
+            margin: 0 0 3px;
+
+            font-size: 12px;
+        }
+
+        .admin-info-card p {
+            margin: 0;
+
+            font-size: 10px;
+            line-height: 1.5;
+        }
+
+
+        /* =========================================================
+           RESPONSIVE
+           ========================================================= */
+
+        @media (max-width: 900px) {
+
+            .admin-users-navbar .navbar-inner {
+                flex-wrap: wrap;
+
+                padding-top: 10px;
+                padding-bottom: 10px;
+            }
+
+            .admin-users-nav {
+                width: 100%;
+
+                justify-content: flex-start;
+            }
+
+            .admin-users-hero {
+                align-items: flex-start;
+
+                flex-direction: column;
+            }
+
+            .admin-users-info {
+                grid-template-columns: 1fr;
+            }
+        }
+
+
+        @media (max-width: 650px) {
+
+            .admin-users-container {
+                padding-top: 22px;
+            }
+
+            .users-toolbar {
+                align-items: flex-start;
+
+                flex-direction: column;
+            }
+
+            .admin-users-hero {
+                padding: 24px 21px;
+            }
+
+            .admin-users-hero-actions {
+                width: 100%;
+            }
+
+            .admin-users-hero-actions .btn {
+                width: 100%;
+            }
+        }
+
+
+        @media (max-width: 480px) {
+
+            .admin-users-navbar .navbar-brand span:last-child {
+                display: none;
+            }
+
+            .admin-users-nav {
+                width: auto;
+
+                margin-left: auto;
+            }
+        }
+    </style>
+</head>
+
+
+<body class="admin-users-page">
+
+<!-- =========================================================
+     NAVBAR
+     ========================================================= -->
+
+<nav
+        class="navbar admin-users-navbar"
+        aria-label="Admin navigation">
+
+    <div class="navbar-inner">
+
+        <a
+                th:href="@{/}"
+                class="navbar-brand">
+
+            <span
+                    class="brand-icon"
+                    aria-hidden="true">
+                📚
+            </span>
+
+            <span>
+                Library Management System
+            </span>
+
+        </a>
+
+
+        <div class="admin-users-nav">
+
+            <a
+                    th:href="@{/dashboard}"
+                    class="navbar-link">
+                Dashboard
+            </a>
+
+            <a
+                    th:href="@{/admin/books}"
+                    class="navbar-link">
+                Books
+            </a>
+
+            <a
+                    th:href="@{/admin/users}"
+                    class="navbar-link active">
+                Users
+            </a>
+
+            <a
+                    th:href="@{/admin/issued-books}"
+                    class="navbar-link">
+                Issued
+            </a>
+
+        </div>
+
+    </div>
+
+</nav>
+
+
+<!-- =========================================================
+     MAIN
+     ========================================================= -->
+
+<main>
+
+    <div class="container admin-users-container">
+
+
+        <!-- =====================================================
+             HERO
+             ===================================================== -->
+
+        <section class="admin-users-hero">
+
+            <div class="admin-users-hero-copy">
+
+                <div class="admin-users-eyebrow">
+                    Administration
+                </div>
+
+                <h1>
+                    User Management
+                </h1>
+
+                <p>
+                    Review registered members, manage account access,
+                    update user information and maintain library roles
+                    from one administrative workspace.
+                </p>
+
+            </div>
+
+
+            <div class="admin-users-hero-actions">
+
+                <a
+                        th:href="@{/dashboard}"
+                        class="btn admin-dashboard-button">
+
+                    ← Dashboard
+
+                </a>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             ALERTS
+             ===================================================== -->
+
+        <div class="admin-users-alerts">
+
+
+            <!-- Updated -->
+
+            <div
+                    th:if="${param.updated}"
+                    class="alert alert-success"
+                    role="status">
+
+                <span
+                        class="alert-icon"
+                        aria-hidden="true">
+                    ✓
+                </span>
+
+                <div>
+
+                    <strong>
+                        User updated successfully
+                    </strong>
+
+                    <p>
+                        The account information has been saved.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- Deleted -->
+
+            <div
+                    th:if="${param.deleted}"
+                    class="alert alert-success"
+                    role="status">
+
+                <span
+                        class="alert-icon"
+                        aria-hidden="true">
+                    ✓
+                </span>
+
+                <div>
+
+                    <strong>
+                        User deleted successfully
+                    </strong>
+
+                    <p>
+                        The user account has been removed from the system.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- Error -->
+
+            <div
+                    th:if="${param.error}"
+                    class="alert alert-danger"
+                    role="alert">
+
+                <span
+                        class="alert-icon"
+                        aria-hidden="true">
+                    ✕
+                </span>
+
+                <div>
+
+                    <strong>
+                        Unable to complete request
+                    </strong>
+
+                    <p th:text="${param.error}">
+                        Something went wrong.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             TOOLBAR
+             ===================================================== -->
+
+        <div class="users-toolbar">
+
+            <div class="users-toolbar-copy">
+
+                <h2>
+                    Registered Users
+                </h2>
+
+                <p>
+                    Manage member information, roles and account access.
+                </p>
+
+            </div>
+
+
+            <span
+                    th:if="${!#lists.isEmpty(users)}"
+                    class="user-count">
+
+                <span aria-hidden="true">
+                    👥
+                </span>
+
+                <span th:text="${#lists.size(users)}">
+                    0
+                </span>
+
+                <span>
+                    users
+                </span>
+
+            </span>
+
+        </div>
+
+
+        <!-- =====================================================
+             USERS TABLE
+             ===================================================== -->
+
+        <section class="users-table-card">
+
+
+            <!-- Empty -->
+
+            <div
+                    th:if="${#lists.isEmpty(users)}"
+                    class="users-empty">
+
+                <div
+                        class="users-empty-icon"
+                        aria-hidden="true">
+                    👥
+                </div>
+
+                <h2>
+                    No users found
+                </h2>
+
+                <p>
+                    There are currently no registered users
+                    available to manage.
+                </p>
+
+            </div>
+
+
+            <!-- Table -->
+
+            <div
+                    th:if="${!#lists.isEmpty(users)}"
+                    class="users-table-wrap">
+
+                <table class="users-table">
+
+                    <thead>
+
+                    <tr>
+                        <th>ID</th>
+                        <th>User</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Account Status</th>
+                        <th>Created At</th>
+                        <th>Actions</th>
+                    </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                    <tr th:each="user : ${users}">
+
+
+                        <!-- ID -->
+
+                        <td>
+
+                            <span
+                                    class="user-id"
+                                    th:text="${user.id}">
+                                1
+                            </span>
+
+                        </td>
+
+
+                        <!-- Name -->
+
+                        <td class="user-name-cell">
+
+                            <div class="user-name-wrap">
+
+                                <span
+                                        class="user-avatar"
+                                        aria-hidden="true">
+                                    👤
+                                </span>
+
+                                <span
+                                        class="user-name"
+                                        th:text="${user.name}">
+                                    User Name
+                                </span>
+
+                            </div>
+
+                        </td>
+
+
+                        <!-- Email -->
+
+                        <td>
+
+                            <span
+                                    class="user-email"
+                                    th:text="${user.email}">
+                                user@example.com
+                            </span>
+
+                        </td>
+
+
+                        <!-- Role -->
+
+                        <td>
+
+                            <span
+                                    th:if="${user.role.name() == 'ADMIN'}"
+                                    class="role-badge admin">
+
+                                🛡 Admin
+
+                            </span>
+
+
+                            <span
+                                    th:if="${user.role.name() != 'ADMIN'}"
+                                    class="role-badge user"
+                                    th:text="${user.role}">
+                                USER
+                            </span>
+
+                        </td>
+
+
+                        <!-- Account Status -->
+
+                        <td>
+
+                            <span
+                                    th:if="${user.enabled}"
+                                    class="account-status enabled">
+
+                                Enabled
+
+                            </span>
+
+
+                            <span
+                                    th:if="${!user.enabled}"
+                                    class="account-status disabled">
+
+                                Disabled
+
+                            </span>
+
+                        </td>
+
+
+                        <!-- Created -->
+
+                        <td>
+
+                            <span
+                                    class="user-created"
+                                    th:text="${user.createdAt}">
+                                2026-09-09
+                            </span>
+
+                        </td>
+
+
+                        <!-- Actions -->
+
+                        <td>
+
+                            <div class="user-actions">
+
+
+                                <!-- Edit -->
+
+                                <a
+                                        th:href="@{/admin/users/{id}/edit(id=${user.id})}"
+                                        class="btn action-button edit-user-button">
+
+                                    ✎ Edit
+
+                                </a>
+
+
+                                <!-- Toggle -->
+
+                                <form
+                                        th:if="${user.role.name() != 'ADMIN'}"
+                                        th:action="@{/admin/users/{id}/toggle(id=${user.id})}"
+                                        method="post">
+
+                                    <input
+                                            type="hidden"
+                                            th:name="${_csrf.parameterName}"
+                                            th:value="${_csrf.token}">
+
+
+                                    <button
+                                            type="submit"
+                                            th:if="${user.enabled}"
+                                            class="btn action-button disable-user-button">
+
+                                        Disable
+
+                                    </button>
+
+
+                                    <button
+                                            type="submit"
+                                            th:if="${!user.enabled}"
+                                            class="btn action-button enable-user-button">
+
+                                        Enable
+
+                                    </button>
+
+                                </form>
+
+
+                                <!-- Delete -->
+
+                                <form
+                                        th:if="${user.role.name() != 'ADMIN'}"
+                                        th:action="@{/admin/users/{id}/delete(id=${user.id})}"
+                                        method="post"
+                                        onsubmit="return confirm('Are you sure you want to delete this user?');">
+
+                                    <input
+                                            type="hidden"
+                                            th:name="${_csrf.parameterName}"
+                                            th:value="${_csrf.token}">
+
+                                    <button
+                                            type="submit"
+                                            class="btn action-button delete-user-button">
+
+                                        🗑 Delete
+
+                                    </button>
+
+                                </form>
+
+
+                                <!-- Protected Admin -->
+
+                                <span
+                                        th:if="${user.role.name() == 'ADMIN'}"
+                                        class="admin-protected">
+
+                                    🔒 Protected Admin
+
+                                </span>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             ADMIN INFORMATION
+             ===================================================== -->
+
+        <section
+                class="admin-users-info"
+                aria-label="User management information">
+
+
+            <div class="admin-info-card">
+
+                <span
+                        class="admin-info-icon"
+                        aria-hidden="true">
+                    ✎
+                </span>
+
+                <div>
+
+                    <h3>
+                        Update accounts
+                    </h3>
+
+                    <p>
+                        Edit member names, email addresses
+                        and assigned roles.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="admin-info-card">
+
+                <span
+                        class="admin-info-icon"
+                        aria-hidden="true">
+                    🔐
+                </span>
+
+                <div>
+
+                    <h3>
+                        Control access
+                    </h3>
+
+                    <p>
+                        Enable or disable non-admin accounts
+                        without deleting them.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="admin-info-card">
+
+                <span
+                        class="admin-info-icon"
+                        aria-hidden="true">
+                    🛡️
+                </span>
+
+                <div>
+
+                    <h3>
+                        Admin protection
+                    </h3>
+
+                    <p>
+                        Administrative accounts remain protected
+                        from disable and delete actions.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </div>
+
+</main>
+
+</body>
+
+</html>

@@ -1,0 +1,1914 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0">
+
+    <meta
+            name="description"
+            content="Library Management System for discovering books, managing borrowing, reservations, fines and library communication.">
+
+    <title>Library Management System</title>
+
+    <link
+            rel="stylesheet"
+            th:href="@{/css/style.css}">
+
+    <style>
+        /* =========================================================
+           HOME PAGE
+           ========================================================= */
+
+        .home-page {
+            min-height: 100vh;
+
+            background:
+                radial-gradient(
+                    circle at 88% 8%,
+                    rgba(15, 118, 110, 0.075),
+                    transparent 24%
+                ),
+                radial-gradient(
+                    circle at 5% 35%,
+                    rgba(217, 119, 6, 0.035),
+                    transparent 20%
+                ),
+                var(--background);
+        }
+
+
+        /* =========================================================
+           HOME NAVIGATION
+           ========================================================= */
+
+        .home-navbar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+
+            background: rgba(255, 255, 255, 0.92);
+
+            border-bottom: 1px solid rgba(226, 232, 224, 0.95);
+
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+
+        .home-navbar .navbar-inner {
+            min-height: 70px;
+        }
+
+        .home-navbar-actions {
+            display: flex;
+            align-items: center;
+
+            gap: 8px;
+        }
+
+        .home-navbar-actions .btn {
+            min-height: 38px;
+
+            padding: 8px 14px;
+        }
+
+        .home-navbar-actions .btn-secondary {
+            background: transparent;
+        }
+
+
+        /* =========================================================
+           HERO
+           ========================================================= */
+
+        .hero {
+            position: relative;
+
+            overflow: hidden;
+
+            padding: 78px 0 70px;
+        }
+
+        .hero::before {
+            content: "";
+
+            position: absolute;
+
+            width: 410px;
+            height: 410px;
+
+            top: -240px;
+            right: -110px;
+
+            border-radius: 50%;
+
+            background:
+                rgba(15, 118, 110, 0.055);
+
+            pointer-events: none;
+        }
+
+        .hero::after {
+            content: "";
+
+            position: absolute;
+
+            width: 250px;
+            height: 250px;
+
+            bottom: -160px;
+            left: -100px;
+
+            border-radius: 50%;
+
+            background:
+                rgba(217, 119, 6, 0.04);
+
+            pointer-events: none;
+        }
+
+        .hero-inner {
+            position: relative;
+            z-index: 1;
+
+            display: grid;
+
+            grid-template-columns:
+                minmax(0, 1.08fr)
+                minmax(360px, 0.92fr);
+
+            align-items: center;
+
+            gap: 72px;
+        }
+
+        .hero-content {
+            max-width: 690px;
+        }
+
+        .hero-eyebrow {
+            display: inline-flex;
+            align-items: center;
+
+            gap: 8px;
+
+            margin-bottom: 20px;
+
+            padding: 7px 11px;
+
+            background: var(--primary-light);
+
+            border: 1px solid var(--primary-border);
+            border-radius: var(--radius-pill);
+
+            color: var(--primary-dark);
+
+            font-size: 11px;
+            font-weight: 800;
+
+            letter-spacing: 0.09em;
+            text-transform: uppercase;
+        }
+
+        .hero-eyebrow-dot {
+            width: 7px;
+            height: 7px;
+
+            flex: 0 0 auto;
+
+            background: var(--primary);
+
+            border-radius: 50%;
+
+            box-shadow:
+                0 0 0 4px rgba(15, 118, 110, 0.10);
+        }
+
+        .hero-title {
+            max-width: 720px;
+
+            margin: 0 0 21px;
+
+            color: var(--text-heading);
+
+            font-size: clamp(40px, 5vw, 64px);
+            font-weight: 800;
+
+            line-height: 1.045;
+
+            letter-spacing: -0.05em;
+        }
+
+        .hero-title-highlight {
+            color: var(--primary);
+        }
+
+        .hero-description {
+            max-width: 620px;
+
+            margin: 0 0 30px;
+
+            color: var(--text-secondary);
+
+            font-size: 16px;
+            line-height: 1.78;
+        }
+
+        .hero-actions {
+            display: flex;
+            align-items: center;
+
+            gap: 11px;
+
+            flex-wrap: wrap;
+
+            margin-bottom: 29px;
+        }
+
+        .hero-actions .btn {
+            min-height: 47px;
+
+            padding: 11px 20px;
+
+            font-size: 14px;
+        }
+
+        .hero-trust {
+            display: flex;
+            align-items: center;
+
+            gap: 20px;
+
+            flex-wrap: wrap;
+        }
+
+        .trust-item {
+            display: inline-flex;
+            align-items: center;
+
+            gap: 8px;
+
+            color: var(--text-muted);
+
+            font-size: 12px;
+            font-weight: 650;
+        }
+
+        .trust-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            width: 25px;
+            height: 25px;
+
+            flex: 0 0 auto;
+
+            background: var(--surface);
+
+            border: 1px solid var(--border);
+            border-radius: 8px;
+
+            color: var(--primary);
+
+            font-size: 11px;
+
+            box-shadow: var(--shadow-xs);
+        }
+
+
+        /* =========================================================
+           HERO LIBRARY VISUAL
+           ========================================================= */
+
+        .hero-visual {
+            position: relative;
+
+            min-height: 445px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .library-panel {
+            position: relative;
+
+            width: min(100%, 440px);
+
+            overflow: hidden;
+
+            padding: 31px;
+
+            background:
+                linear-gradient(
+                    155deg,
+                    #ffffff 0%,
+                    #fbfcf9 100%
+                );
+
+            border: 1px solid var(--border);
+            border-radius: 24px;
+
+            box-shadow:
+                0 28px 70px rgba(15, 23, 42, 0.12);
+        }
+
+        .library-panel::before {
+            content: "";
+
+            position: absolute;
+
+            width: 180px;
+            height: 180px;
+
+            top: -110px;
+            right: -80px;
+
+            border-radius: 50%;
+
+            background:
+                rgba(15, 118, 110, 0.06);
+        }
+
+        .library-panel-header {
+            position: relative;
+            z-index: 1;
+
+            display: flex;
+            align-items: center;
+
+            gap: 14px;
+
+            margin-bottom: 26px;
+        }
+
+        .library-panel-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            width: 58px;
+            height: 58px;
+
+            flex: 0 0 auto;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #ecf8f5,
+                    #dff3ef
+                );
+
+            border: 1px solid var(--primary-border);
+            border-radius: 16px;
+
+            font-size: 27px;
+        }
+
+        .library-panel-heading h2 {
+            margin: 0 0 3px;
+
+            color: var(--text-heading);
+
+            font-size: 19px;
+        }
+
+        .library-panel-heading p {
+            margin: 0;
+
+            font-size: 12px;
+        }
+
+
+        /* =========================================================
+           SEARCH PREVIEW
+           ========================================================= */
+
+        .catalogue-preview {
+            position: relative;
+            z-index: 1;
+
+            margin-bottom: 23px;
+        }
+
+        .preview-search {
+            display: flex;
+            align-items: center;
+
+            gap: 9px;
+
+            min-height: 44px;
+
+            padding: 0 13px;
+
+            background: var(--surface);
+
+            border: 1px solid var(--border-dark);
+            border-radius: 10px;
+
+            color: var(--text-muted);
+
+            font-size: 12px;
+
+            box-shadow:
+                inset 0 1px 2px rgba(15, 23, 42, 0.02);
+        }
+
+        .preview-search-icon {
+            color: var(--primary);
+
+            font-size: 14px;
+        }
+
+
+        /* =========================================================
+           BOOK SHELF
+           ========================================================= */
+
+        .shelf-area {
+            position: relative;
+            z-index: 1;
+
+            padding: 22px 19px 18px;
+
+            background: var(--surface-soft);
+
+            border: 1px solid var(--border);
+            border-radius: 14px;
+        }
+
+        .shelf-title {
+            margin-bottom: 16px;
+
+            color: var(--text-muted);
+
+            font-size: 10px;
+            font-weight: 800;
+
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .shelf {
+            display: flex;
+            align-items: flex-end;
+
+            gap: 7px;
+
+            height: 112px;
+
+            padding: 0 8px 12px;
+
+            border-bottom: 7px solid var(--primary-dark);
+            border-radius: 2px;
+        }
+
+        .book {
+            position: relative;
+
+            width: 31px;
+
+            border-radius: 4px 4px 2px 2px;
+
+            box-shadow:
+                2px 1px 4px rgba(15, 23, 42, 0.11);
+        }
+
+        .book::before {
+            content: "";
+
+            position: absolute;
+
+            left: 5px;
+            right: 5px;
+
+            top: 9px;
+
+            height: 2px;
+
+            background: rgba(255, 255, 255, 0.46);
+        }
+
+        .book-1 {
+            height: 76px;
+            background: #0f766e;
+        }
+
+        .book-2 {
+            height: 94px;
+            background: #d97706;
+        }
+
+        .book-3 {
+            height: 70px;
+            background: #64748b;
+        }
+
+        .book-4 {
+            height: 87px;
+            background: #15803d;
+        }
+
+        .book-5 {
+            height: 74px;
+            background: #92400e;
+        }
+
+        .book-6 {
+            height: 99px;
+            background: #115e59;
+        }
+
+        .book-7 {
+            height: 82px;
+            background: #475569;
+        }
+
+
+        /* =========================================================
+           FLOATING HERO CARDS
+           ========================================================= */
+
+        .floating-card {
+            position: absolute;
+
+            z-index: 2;
+
+            display: flex;
+            align-items: center;
+
+            gap: 10px;
+
+            padding: 12px 14px;
+
+            background:
+                rgba(255, 255, 255, 0.96);
+
+            border: 1px solid var(--border);
+            border-radius: 12px;
+
+            box-shadow:
+                0 14px 30px rgba(15, 23, 42, 0.10);
+
+            color: var(--text-primary);
+
+            font-size: 12px;
+            font-weight: 750;
+
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .floating-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            width: 34px;
+            height: 34px;
+
+            flex: 0 0 auto;
+
+            background: var(--primary-light);
+
+            border-radius: 9px;
+
+            color: var(--primary-dark);
+
+            font-size: 15px;
+        }
+
+        .floating-card-top {
+            top: 26px;
+            right: -20px;
+        }
+
+        .floating-card-bottom {
+            bottom: 31px;
+            left: -30px;
+        }
+
+
+        /* =========================================================
+           FEATURES
+           ========================================================= */
+
+        .features-section {
+            padding: 30px 0 72px;
+        }
+
+        .section-heading {
+            max-width: 670px;
+
+            margin: 0 auto 35px;
+
+            text-align: center;
+        }
+
+        .section-eyebrow {
+            margin-bottom: 8px;
+
+            color: var(--primary);
+
+            font-size: 11px;
+            font-weight: 800;
+
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        .section-heading h2 {
+            margin-bottom: 10px;
+
+            font-size: clamp(27px, 3vw, 33px);
+
+            letter-spacing: -0.03em;
+        }
+
+        .section-heading p {
+            margin: 0;
+
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .feature-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, minmax(0, 1fr));
+
+            gap: 17px;
+        }
+
+        .feature-card {
+            padding: 24px;
+
+            background: var(--surface);
+
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+
+            box-shadow: var(--shadow-sm);
+
+            transition:
+                transform var(--transition),
+                border-color var(--transition),
+                box-shadow var(--transition);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-3px);
+
+            border-color: var(--primary-border);
+
+            box-shadow: var(--shadow-md);
+        }
+
+        .feature-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            width: 47px;
+            height: 47px;
+
+            margin-bottom: 17px;
+
+            background: var(--primary-light);
+
+            border: 1px solid rgba(15, 118, 110, 0.11);
+            border-radius: 12px;
+
+            color: var(--primary-dark);
+
+            font-size: 20px;
+        }
+
+        .feature-card h3 {
+            margin-bottom: 7px;
+
+            font-size: 16px;
+        }
+
+        .feature-card p {
+            margin: 0;
+
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+
+        /* =========================================================
+           HOW IT WORKS
+           ========================================================= */
+
+        .how-section {
+            padding: 10px 0 74px;
+        }
+
+        .how-panel {
+            padding: 42px;
+
+            background:
+                linear-gradient(
+                    180deg,
+                    rgba(255, 255, 255, 0.72),
+                    rgba(248, 250, 247, 0.90)
+                );
+
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+
+            box-shadow: var(--shadow-sm);
+        }
+
+        .steps {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, minmax(0, 1fr));
+
+            gap: 18px;
+        }
+
+        .step {
+            position: relative;
+
+            min-width: 0;
+
+            padding: 22px;
+
+            background: var(--surface);
+
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+        }
+
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            width: 38px;
+            height: 38px;
+
+            margin-bottom: 16px;
+
+            background: var(--primary);
+
+            border-radius: 11px;
+
+            color: #ffffff;
+
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .step h3 {
+            margin-bottom: 7px;
+
+            font-size: 16px;
+        }
+
+        .step p {
+            margin: 0;
+
+            font-size: 13px;
+            line-height: 1.65;
+        }
+
+
+        /* =========================================================
+           CTA
+           ========================================================= */
+
+        .cta-section {
+            padding: 0 0 72px;
+        }
+
+        .cta-card {
+            position: relative;
+
+            overflow: hidden;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 35px;
+
+            padding: 42px 46px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #134e4a 0%,
+                    #0f766e 55%,
+                    #115e59 100%
+                );
+
+            border-radius: var(--radius-xl);
+
+            box-shadow:
+                0 18px 38px rgba(15, 118, 110, 0.18);
+        }
+
+        .cta-card::before {
+            content: "";
+
+            position: absolute;
+
+            width: 280px;
+            height: 280px;
+
+            top: -190px;
+            left: -80px;
+
+            border-radius: 50%;
+
+            background:
+                rgba(255, 255, 255, 0.07);
+        }
+
+        .cta-card::after {
+            content: "";
+
+            position: absolute;
+
+            width: 210px;
+            height: 210px;
+
+            right: -85px;
+            bottom: -135px;
+
+            border-radius: 50%;
+
+            background:
+                rgba(217, 119, 6, 0.17);
+        }
+
+        .cta-copy,
+        .cta-actions {
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-copy {
+            max-width: 660px;
+        }
+
+        .cta-copy h2 {
+            margin-bottom: 8px;
+
+            color: #ffffff;
+
+            font-size: 28px;
+        }
+
+        .cta-copy p {
+            margin: 0;
+
+            color:
+                rgba(255, 255, 255, 0.80);
+
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .cta-actions {
+            display: flex;
+            align-items: center;
+
+            gap: 9px;
+
+            flex: 0 0 auto;
+        }
+
+        .cta-primary {
+            background: #ffffff;
+
+            border-color: #ffffff;
+
+            color: var(--primary-dark);
+        }
+
+        .cta-primary:hover {
+            background: #f0fdfa;
+
+            border-color: #f0fdfa;
+
+            color: var(--primary-darker);
+
+            box-shadow:
+                0 6px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .cta-secondary {
+            background:
+                rgba(255, 255, 255, 0.06);
+
+            border-color:
+                rgba(255, 255, 255, 0.28);
+
+            color: #ffffff;
+
+            box-shadow: none;
+        }
+
+        .cta-secondary:hover {
+            background:
+                rgba(255, 255, 255, 0.12);
+
+            border-color:
+                rgba(255, 255, 255, 0.42);
+
+            color: #ffffff;
+
+            box-shadow: none;
+        }
+
+
+        /* =========================================================
+           FOOTER
+           ========================================================= */
+
+        .home-footer {
+            border-top: 1px solid var(--border);
+
+            background:
+                rgba(255, 255, 255, 0.45);
+        }
+
+        .home-footer-inner {
+            min-height: 92px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 24px;
+
+            padding-top: 20px;
+            padding-bottom: 20px;
+        }
+
+        .footer-brand {
+            display: flex;
+            align-items: center;
+
+            gap: 9px;
+
+            color: var(--text-primary);
+
+            font-size: 13px;
+            font-weight: 750;
+        }
+
+        .footer-brand-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            width: 31px;
+            height: 31px;
+
+            background: var(--primary-light);
+
+            border: 1px solid var(--primary-border);
+            border-radius: 9px;
+
+            font-size: 15px;
+        }
+
+        .home-footer p {
+            margin: 0;
+
+            color: var(--text-muted);
+
+            font-size: 12px;
+        }
+
+
+        /* =========================================================
+           RESPONSIVE
+           ========================================================= */
+
+        @media (max-width: 1000px) {
+
+            .hero {
+                padding-top: 60px;
+            }
+
+            .hero-inner {
+                grid-template-columns: 1fr;
+
+                gap: 52px;
+            }
+
+            .hero-content {
+                max-width: 760px;
+
+                margin: 0 auto;
+
+                text-align: center;
+            }
+
+            .hero-description {
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .hero-actions,
+            .hero-trust {
+                justify-content: center;
+            }
+
+            .hero-visual {
+                width: min(100%, 600px);
+
+                margin: 0 auto;
+            }
+
+            .feature-grid {
+                grid-template-columns:
+                    repeat(2, minmax(0, 1fr));
+            }
+
+            .cta-card {
+                align-items: flex-start;
+
+                flex-direction: column;
+            }
+        }
+
+
+        @media (max-width: 760px) {
+
+            .home-navbar .navbar-inner {
+                flex-direction: row;
+
+                flex-wrap: nowrap;
+            }
+
+            .home-navbar .navbar-brand {
+                overflow: hidden;
+            }
+
+            .home-navbar .navbar-brand span:last-child {
+                overflow: hidden;
+
+                text-overflow: ellipsis;
+            }
+
+            .home-navbar-actions {
+                flex: 0 0 auto;
+            }
+
+            .home-navbar-actions .btn-secondary {
+                display: none;
+            }
+
+            .hero {
+                padding: 47px 0 48px;
+            }
+
+            .hero-title {
+                font-size: clamp(36px, 9vw, 47px);
+            }
+
+            .hero-description {
+                font-size: 15px;
+            }
+
+            .hero-visual {
+                min-height: 410px;
+            }
+
+            .floating-card-top {
+                right: 0;
+            }
+
+            .floating-card-bottom {
+                left: 0;
+            }
+
+            .feature-grid,
+            .steps {
+                grid-template-columns: 1fr;
+            }
+
+            .how-panel {
+                padding: 27px;
+            }
+
+            .cta-card {
+                padding: 34px 28px;
+            }
+
+            .cta-actions {
+                width: 100%;
+            }
+
+            .home-footer-inner {
+                align-items: flex-start;
+
+                flex-direction: column;
+
+                gap: 8px;
+            }
+        }
+
+
+        @media (max-width: 520px) {
+
+            .home-navbar .navbar-inner {
+                width: 92%;
+            }
+
+            .home-navbar .navbar-brand {
+                font-size: 14px;
+            }
+
+            .home-navbar .brand-icon {
+                display: none;
+            }
+
+            .home-navbar-actions .btn {
+                min-height: 35px;
+
+                padding: 7px 11px;
+
+                font-size: 12px;
+            }
+
+            .hero {
+                padding-top: 40px;
+            }
+
+            .hero-eyebrow {
+                margin-bottom: 16px;
+
+                font-size: 10px;
+            }
+
+            .hero-title {
+                font-size: 37px;
+            }
+
+            .hero-actions {
+                align-items: stretch;
+
+                flex-direction: column;
+            }
+
+            .hero-actions .btn {
+                width: 100%;
+            }
+
+            .hero-trust {
+                align-items: flex-start;
+
+                flex-direction: column;
+
+                gap: 9px;
+            }
+
+            .hero-visual {
+                min-height: 365px;
+            }
+
+            .library-panel {
+                padding: 23px;
+
+                border-radius: 19px;
+            }
+
+            .library-panel-header {
+                margin-bottom: 20px;
+            }
+
+            .library-panel-icon {
+                width: 51px;
+                height: 51px;
+
+                font-size: 23px;
+            }
+
+            .floating-card {
+                padding: 9px 10px;
+
+                font-size: 10px;
+            }
+
+            .floating-icon {
+                width: 29px;
+                height: 29px;
+
+                font-size: 13px;
+            }
+
+            .floating-card-top {
+                top: 7px;
+                right: -2px;
+            }
+
+            .floating-card-bottom {
+                bottom: 7px;
+                left: -2px;
+            }
+
+            .features-section {
+                padding-bottom: 53px;
+            }
+
+            .how-section {
+                padding-bottom: 55px;
+            }
+
+            .how-panel {
+                padding: 20px;
+            }
+
+            .section-heading {
+                margin-bottom: 25px;
+            }
+
+            .cta-section {
+                padding-bottom: 52px;
+            }
+
+            .cta-card {
+                padding: 28px 21px;
+            }
+
+            .cta-copy h2 {
+                font-size: 24px;
+            }
+
+            .cta-actions {
+                align-items: stretch;
+
+                flex-direction: column;
+            }
+
+            .cta-actions .btn {
+                width: 100%;
+            }
+        }
+
+
+        @media (prefers-reduced-motion: reduce) {
+
+            .feature-card {
+                transition: none;
+            }
+        }
+    </style>
+</head>
+
+
+<body class="home-page">
+
+<!-- =========================================================
+     NAVIGATION
+     ========================================================= -->
+
+<nav
+        class="navbar home-navbar"
+        aria-label="Primary navigation">
+
+    <div class="navbar-inner">
+
+        <a
+                th:href="@{/}"
+                class="navbar-brand"
+                aria-label="Library Management System home">
+
+            <span
+                    class="brand-icon"
+                    aria-hidden="true">
+                📚
+            </span>
+
+            <span>
+                Library Management System
+            </span>
+
+        </a>
+
+
+        <div class="home-navbar-actions">
+
+            <a
+                    th:href="@{/login}"
+                    class="btn btn-secondary">
+
+                Sign In
+
+            </a>
+
+            <a
+                    th:href="@{/register}"
+                    class="btn btn-primary">
+
+                Create Account
+
+            </a>
+
+        </div>
+
+    </div>
+
+</nav>
+
+
+<!-- =========================================================
+     MAIN CONTENT
+     ========================================================= -->
+
+<main>
+
+
+    <!-- =====================================================
+         HERO
+         ===================================================== -->
+
+    <section class="hero">
+
+        <div class="container hero-inner">
+
+
+            <!-- Hero Copy -->
+
+            <div class="hero-content">
+
+                <div class="hero-eyebrow">
+
+                    <span
+                            class="hero-eyebrow-dot"
+                            aria-hidden="true">
+                    </span>
+
+                    Modern Library Platform
+
+                </div>
+
+
+                <h1 class="hero-title">
+
+                    Your library,
+                    <span class="hero-title-highlight">
+                        organized beautifully.
+                    </span>
+
+                </h1>
+
+
+                <p class="hero-description">
+
+                    Discover books, manage borrowed titles,
+                    monitor due dates, reserve unavailable books,
+                    track fines and stay connected with your library
+                    through one simple and secure platform.
+
+                </p>
+
+
+                <div class="hero-actions">
+
+                    <a
+                            th:href="@{/login}"
+                            class="btn btn-primary btn-lg">
+
+                        Sign In
+
+                        <span aria-hidden="true">
+                            →
+                        </span>
+
+                    </a>
+
+
+                    <a
+                            th:href="@{/register}"
+                            class="btn btn-secondary btn-lg">
+
+                        Create an Account
+
+                    </a>
+
+                </div>
+
+
+                <div
+                        class="hero-trust"
+                        aria-label="Platform features">
+
+                    <span class="trust-item">
+
+                        <span
+                                class="trust-icon"
+                                aria-hidden="true">
+                            ✓
+                        </span>
+
+                        Simple book management
+
+                    </span>
+
+
+                    <span class="trust-item">
+
+                        <span
+                                class="trust-icon"
+                                aria-hidden="true">
+                            🔒
+                        </span>
+
+                        Secure role-based access
+
+                    </span>
+
+
+                    <span class="trust-item">
+
+                        <span
+                                class="trust-icon"
+                                aria-hidden="true">
+                            ⚡
+                        </span>
+
+                        Easy to use
+
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- Hero Visual -->
+
+            <div
+                    class="hero-visual"
+                    aria-hidden="true">
+
+
+                <div class="library-panel">
+
+
+                    <div class="library-panel-header">
+
+                        <div class="library-panel-icon">
+                            📖
+                        </div>
+
+
+                        <div class="library-panel-heading">
+
+                            <h2>
+                                Digital Library
+                            </h2>
+
+                            <p>
+                                Discover and manage your reading.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="catalogue-preview">
+
+                        <div class="preview-search">
+
+                            <span class="preview-search-icon">
+                                ⌕
+                            </span>
+
+                            <span>
+                                Search by title or author...
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="shelf-area">
+
+                        <div class="shelf-title">
+                            Featured Collection
+                        </div>
+
+
+                        <div class="shelf">
+
+                            <div class="book book-1"></div>
+                            <div class="book book-2"></div>
+                            <div class="book book-3"></div>
+                            <div class="book book-4"></div>
+                            <div class="book book-5"></div>
+                            <div class="book book-6"></div>
+                            <div class="book book-7"></div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="floating-card floating-card-top">
+
+                    <span class="floating-icon">
+                        ✓
+                    </span>
+
+                    <span>
+                        Books available
+                    </span>
+
+                </div>
+
+
+                <div class="floating-card floating-card-bottom">
+
+                    <span class="floating-icon">
+                        🔖
+                    </span>
+
+                    <span>
+                        Easy reservations
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         FEATURES
+         ===================================================== -->
+
+    <section class="features-section">
+
+        <div class="container">
+
+
+            <div class="section-heading">
+
+                <div class="section-eyebrow">
+                    Library Services
+                </div>
+
+                <h2>
+                    Everything you need in one place
+                </h2>
+
+                <p>
+                    A focused platform for everyday library tasks,
+                    designed for both members and administrators.
+                </p>
+
+            </div>
+
+
+            <div class="feature-grid">
+
+
+                <!-- Catalogue -->
+
+                <article class="feature-card">
+
+                    <div
+                            class="feature-icon"
+                            aria-hidden="true">
+                        📚
+                    </div>
+
+                    <h3>
+                        Explore the Catalogue
+                    </h3>
+
+                    <p>
+                        Search the library collection by title or
+                        author and quickly check book availability.
+                    </p>
+
+                </article>
+
+
+                <!-- Borrow -->
+
+                <article class="feature-card">
+
+                    <div
+                            class="feature-icon"
+                            aria-hidden="true">
+                        📖
+                    </div>
+
+                    <h3>
+                        Manage Borrowed Books
+                    </h3>
+
+                    <p>
+                        View issued books, borrowing information,
+                        due dates and return status in one place.
+                    </p>
+
+                </article>
+
+
+                <!-- Reservation -->
+
+                <article class="feature-card">
+
+                    <div
+                            class="feature-icon"
+                            aria-hidden="true">
+                        🔖
+                    </div>
+
+                    <h3>
+                        Reserve Books
+                    </h3>
+
+                    <p>
+                        Reserve unavailable books and keep track
+                        of your active reservation requests.
+                    </p>
+
+                </article>
+
+
+                <!-- Fine -->
+
+                <article class="feature-card">
+
+                    <div
+                            class="feature-icon"
+                            aria-hidden="true">
+                        ₹
+                    </div>
+
+                    <h3>
+                        Track Fines
+                    </h3>
+
+                    <p>
+                        Clearly review overdue records, fine amounts
+                        and payment status without searching through
+                        paperwork.
+                    </p>
+
+                </article>
+
+
+                <!-- Contact -->
+
+                <article class="feature-card">
+
+                    <div
+                            class="feature-icon"
+                            aria-hidden="true">
+                        ✉️
+                    </div>
+
+                    <h3>
+                        Contact the Library
+                    </h3>
+
+                    <p>
+                        Submit questions directly to the library
+                        team and follow their resolution status.
+                    </p>
+
+                </article>
+
+
+                <!-- Security -->
+
+                <article class="feature-card">
+
+                    <div
+                            class="feature-icon"
+                            aria-hidden="true">
+                        🛡️
+                    </div>
+
+                    <h3>
+                        Secure Access
+                    </h3>
+
+                    <p>
+                        Role-based access separates member and
+                        administrative features while keeping
+                        library operations protected.
+                    </p>
+
+                </article>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         HOW IT WORKS
+         ===================================================== -->
+
+    <section class="how-section">
+
+        <div class="container">
+
+            <div class="how-panel">
+
+
+                <div class="section-heading">
+
+                    <div class="section-eyebrow">
+                        Getting Started
+                    </div>
+
+                    <h2>
+                        A simple way to use your library
+                    </h2>
+
+                    <p>
+                        From account creation to discovering books,
+                        the platform keeps the process straightforward.
+                    </p>
+
+                </div>
+
+
+                <div class="steps">
+
+
+                    <article class="step">
+
+                        <div class="step-number">
+                            01
+                        </div>
+
+                        <h3>
+                            Create your account
+                        </h3>
+
+                        <p>
+                            Register as a library member and securely
+                            sign in to your personal dashboard.
+                        </p>
+
+                    </article>
+
+
+                    <article class="step">
+
+                        <div class="step-number">
+                            02
+                        </div>
+
+                        <h3>
+                            Discover a book
+                        </h3>
+
+                        <p>
+                            Browse the catalogue, search by title
+                            or author and check current availability.
+                        </p>
+
+                    </article>
+
+
+                    <article class="step">
+
+                        <div class="step-number">
+                            03
+                        </div>
+
+                        <h3>
+                            Borrow or reserve
+                        </h3>
+
+                        <p>
+                            Manage your issued books or reserve a
+                            title when it is currently unavailable.
+                        </p>
+
+                    </article>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         CALL TO ACTION
+         ===================================================== -->
+
+    <section class="cta-section">
+
+        <div class="container">
+
+            <div class="cta-card">
+
+
+                <div class="cta-copy">
+
+                    <h2>
+                        Ready to explore your library?
+                    </h2>
+
+                    <p>
+                        Sign in to manage your library activity,
+                        or create an account to start discovering
+                        the collection.
+                    </p>
+
+                </div>
+
+
+                <div class="cta-actions">
+
+                    <a
+                            th:href="@{/register}"
+                            class="btn cta-primary">
+
+                        Get Started
+
+                    </a>
+
+
+                    <a
+                            th:href="@{/login}"
+                            class="btn cta-secondary">
+
+                        Sign In
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<!-- =========================================================
+     FOOTER
+     ========================================================= -->
+
+<footer class="home-footer">
+
+    <div class="container home-footer-inner">
+
+
+        <div class="footer-brand">
+
+            <span
+                    class="footer-brand-icon"
+                    aria-hidden="true">
+                📚
+            </span>
+
+            <span>
+                Library Management System
+            </span>
+
+        </div>
+
+
+        <p>
+            © 2026 Library Management System. All rights reserved.
+        </p>
+
+    </div>
+
+</footer>
+
+</body>
+
+</html>

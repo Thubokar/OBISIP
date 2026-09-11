@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0">
+
+    <meta
+            name="description"
+            content="Sign in to the Library Management System.">
+
+    <title>Sign In | Library Management System</title>
+
+    <link
+            rel="stylesheet"
+            th:href="@{/css/style.css}">
+
+    <style>
+        /* =========================================================
+           LOGIN PAGE
+           ========================================================= */
+
+        .login-page {
+            min-height: 100vh;
+
+            display: grid;
+
+            grid-template-columns:
+                minmax(0, 1.05fr)
+                minmax(430px, 0.95fr);
+
+            background: var(--background);
+        }
+
+
+        /* =========================================================
+           LEFT PANEL
+           ========================================================= */
+
+        .login-showcase {
+            position: relative;
+
+            overflow: hidden;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+
+            min-height: 100vh;
+
+            padding: 42px 56px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #134e4a 0%,
+                    #0f766e 52%,
+                    #115e59 100%
+                );
+
+            color: #ffffff;
+        }
+
+        .login-showcase::before {
+            content: "";
+
+            position: absolute;
+
+            width: 460px;
+            height: 460px;
+
+            top: -250px;
+            right: -170px;
+
+            border-radius: 50%;
+
+            background:
+                rgba(255, 255, 255, 0.07);
+        }
+
+        .login-showcase::after {
+            content: "";
+
+            position: absolute;
+
+            width: 320px;
+            height: 320px;
+
+            bottom: -180px;
+            left: -120px;
+
+            border-radius: 50%;
+
+            background:
+                rgba(217, 119, 6, 0.16);
+        }
+
+        .showcase-top,
+        .showcase-content,
+        .showcase-footer {
+            position: relative;
+            z-index: 1;
+        }
+
+
+        /* =========================================================
+           BRAND
+           ========================================================= */
+
+        .login-brand {
+            display: inline-flex;
+            align-items: center;
+
+            gap: 11px;
+
+            color: #ffffff;
+
+            font-size: 17px;
+            font-weight: 800;
+
+            letter-spacing: -0.015em;
+        }
+
+        .login-brand:hover {
+            color: #ffffff;
+        }
+
+        .login-brand-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            width: 40px;
+            height: 40px;
+
+            background:
+                rgba(255, 255, 255, 0.12);
+
+            border:
+                1px solid rgba(255, 255, 255, 0.18);
+
+            border-radius: 11px;
+
+            font-size: 19px;
+
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+
+        /* =========================================================
+           SHOWCASE CONTENT
+           ========================================================= */
+
+        .showcase-content {
+            max-width: 620px;
+
+            margin: auto 0;
+        }
+
+        .showcase-eyebrow {
+            display: inline-flex;
+            align-items: center;
+
+            gap: 7px;
+
+            margin-bottom: 18px;
+
+            padding: 6px 10px;
+
+            background:
+                rgba(255, 255, 255, 0.09);
+
+            border:
+                1px solid rgba(255, 255, 255, 0.14);
+
+            border-radius: 999px;
+
+            color:
+                rgba(255, 255, 255, 0.88);
+
+            font-size: 10px;
+            font-weight: 800;
+
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .showcase-dot {
+            width: 6px;
+            height: 6px;
+
+            border-radius: 50%;
+
+            background: #fbbf24;
+        }
+
+        .showcase-content h1 {
+            max-width: 590px;
+
+            margin-bottom: 18px;
+
+            color: #ffffff;
+
+            font-size: clamp(38px, 4vw, 56px);
+            font-weight: 800;
+
+            line-height: 1.06;
+
+            letter-spacing: -0.045em;
+        }
+
+        .showcase-description {
+            max-width: 570px;
+
+            margin: 0;
+
+            color:
+                rgba(255, 255, 255, 0.78);
+
+            font-size: 15px;
+            line-height: 1.75;
+        }
+
+
+        /* =========================================================
+           SHOWCASE FEATURES
+           ========================================================= */
+
+        .showcase-features {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, minmax(0, 1fr));
+
+            gap: 10px;
+
+            margin-top: 31px;
+        }
+
+        .showcase-feature {
+            min-width: 0;
+
+            padding: 15px;
+
+            background:
+                rgba(255, 255, 255, 0.075);
+
+            border:
+                1px solid rgba(255, 255, 255, 0.12);
+
+            border-radius: 13px;
+
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .showcase-feature-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            width: 32px;
+            height: 32px;
+
+            margin-bottom: 10px;
+
+            background:
+                rgba(255, 255, 255, 0.12);
+
+            border-radius: 9px;
+
+            font-size: 14px;
+        }
+
+        .showcase-feature h3 {
+            margin: 0 0 4px;
+
+            color: #ffffff;
+
+            font-size: 12px;
+            font-weight: 750;
+        }
+
+        .showcase-feature p {
+            margin: 0;
+
+            color:
+                rgba(255, 255, 255, 0.65);
+
+            font-size: 10px;
+            line-height: 1.5;
+        }
+
+
+        /* =========================================================
+           SHOWCASE FOOTER
+           ========================================================= */
+
+        .showcase-footer {
+            color:
+                rgba(255, 255, 255, 0.56);
+
+            font-size: 11px;
+        }
+
+
+        /* =========================================================
+           LOGIN FORM SIDE
+           ========================================================= */
+
+        .login-form-side {
+            min-height: 100vh;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 40px;
+
+            background:
+                radial-gradient(
+                    circle at 90% 10%,
+                    rgba(15, 118, 110, 0.055),
+                    transparent 24%
+                ),
+                var(--background);
+        }
+
+        .login-form-wrapper {
+            width: 100%;
+            max-width: 450px;
+        }
+
+
+        /* =========================================================
+           MOBILE BRAND
+           ========================================================= */
+
+        .mobile-brand {
+            display: none;
+
+            justify-content: center;
+
+            margin-bottom: 20px;
+        }
+
+        .mobile-brand .navbar-brand {
+            font-size: 17px;
+        }
+
+
+        /* =========================================================
+           LOGIN CARD
+           ========================================================= */
+
+        .login-card {
+            padding: 34px;
+
+            background: var(--surface);
+
+            border: 1px solid var(--border);
+            border-radius: 20px;
+
+            box-shadow:
+                0 20px 46px rgba(15, 23, 42, 0.09);
+        }
+
+        .login-header {
+            margin-bottom: 25px;
+        }
+
+        .login-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            width: 50px;
+            height: 50px;
+
+            margin-bottom: 16px;
+
+            background: var(--primary-light);
+
+            border: 1px solid var(--primary-border);
+            border-radius: 14px;
+
+            color: var(--primary-dark);
+
+            font-size: 21px;
+        }
+
+        .login-eyebrow {
+            margin-bottom: 6px;
+
+            color: var(--primary);
+
+            font-size: 10px;
+            font-weight: 800;
+
+            letter-spacing: 0.13em;
+            text-transform: uppercase;
+        }
+
+        .login-header h1 {
+            margin: 0 0 7px;
+
+            font-size: 28px;
+            font-weight: 800;
+
+            letter-spacing: -0.03em;
+        }
+
+        .login-header p {
+            margin: 0;
+
+            font-size: 13px;
+            line-height: 1.65;
+        }
+
+
+        /* =========================================================
+           ALERTS
+           ========================================================= */
+
+        .login-card .alert {
+            margin: 0 0 18px;
+
+            padding: 11px 12px;
+        }
+
+        .login-card .alert-icon {
+            margin-top: 1px;
+
+            border-radius: 50%;
+        }
+
+
+        /* =========================================================
+           FORM
+           ========================================================= */
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+
+            gap: 17px;
+        }
+
+        .login-form-group {
+            margin: 0;
+        }
+
+        .login-form-group label {
+            display: block;
+
+            margin-bottom: 6px;
+
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .login-input-wrapper {
+            position: relative;
+        }
+
+        .login-input-icon {
+            position: absolute;
+
+            top: 50%;
+            left: 13px;
+
+            transform: translateY(-50%);
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            width: 18px;
+
+            color: var(--text-muted);
+
+            font-size: 13px;
+
+            pointer-events: none;
+        }
+
+        .login-input-wrapper input {
+            width: 100%;
+            max-width: none;
+
+            min-height: 45px;
+
+            padding:
+                10px
+                13px
+                10px
+                41px;
+        }
+
+        .login-submit {
+            width: 100%;
+
+            min-height: 45px;
+
+            margin-top: 2px;
+
+            font-size: 13px;
+        }
+
+
+        /* =========================================================
+           DIVIDER
+           ========================================================= */
+
+        .login-divider {
+            display: flex;
+            align-items: center;
+
+            gap: 12px;
+
+            margin: 20px 0 17px;
+
+            color: var(--text-muted);
+
+            font-size: 11px;
+            font-weight: 650;
+        }
+
+        .login-divider::before,
+        .login-divider::after {
+            content: "";
+
+            flex: 1;
+
+            height: 1px;
+
+            background: var(--border);
+        }
+
+
+        /* =========================================================
+           REGISTER
+           ========================================================= */
+
+        .register-button {
+            width: 100%;
+
+            min-height: 44px;
+        }
+
+
+        /* =========================================================
+           LOGIN FOOTER
+           ========================================================= */
+
+        .login-footer {
+            margin-top: 18px;
+
+            text-align: center;
+        }
+
+        .login-footer a {
+            display: inline-flex;
+            align-items: center;
+
+            gap: 6px;
+
+            color: var(--text-secondary);
+
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .login-footer a:hover {
+            color: var(--primary);
+        }
+
+
+        /* =========================================================
+           RESPONSIVE
+           ========================================================= */
+
+        @media (max-width: 1050px) {
+
+            .login-page {
+                grid-template-columns:
+                    minmax(0, 0.9fr)
+                    minmax(410px, 1.1fr);
+            }
+
+            .login-showcase {
+                padding: 38px;
+            }
+
+            .showcase-features {
+                grid-template-columns: 1fr;
+            }
+
+            .showcase-feature {
+                display: grid;
+
+                grid-template-columns:
+                    32px 1fr;
+
+                column-gap: 10px;
+            }
+
+            .showcase-feature-icon {
+                grid-row: 1 / span 2;
+
+                margin: 0;
+            }
+        }
+
+
+        @media (max-width: 820px) {
+
+            .login-page {
+                display: block;
+            }
+
+            .login-showcase {
+                display: none;
+            }
+
+            .login-form-side {
+                min-height: 100vh;
+
+                padding: 28px 20px;
+            }
+
+            .mobile-brand {
+                display: flex;
+            }
+        }
+
+
+        @media (max-width: 520px) {
+
+            .login-form-side {
+                align-items: flex-start;
+
+                padding: 22px 15px;
+            }
+
+            .login-form-wrapper {
+                max-width: none;
+            }
+
+            .mobile-brand {
+                margin-bottom: 17px;
+            }
+
+            .login-card {
+                padding: 26px 20px;
+
+                border-radius: 16px;
+            }
+
+            .login-header {
+                margin-bottom: 21px;
+            }
+
+            .login-icon {
+                width: 46px;
+                height: 46px;
+
+                margin-bottom: 13px;
+
+                font-size: 19px;
+            }
+
+            .login-header h1 {
+                font-size: 25px;
+            }
+        }
+
+
+        @media (max-height: 720px) and (min-width: 821px) {
+
+            .login-showcase {
+                padding-top: 28px;
+                padding-bottom: 28px;
+            }
+
+            .showcase-content h1 {
+                font-size: 40px;
+            }
+
+            .showcase-description {
+                font-size: 13px;
+            }
+
+            .showcase-features {
+                margin-top: 20px;
+            }
+
+            .login-form-side {
+                padding-top: 22px;
+                padding-bottom: 22px;
+            }
+
+            .login-card {
+                padding: 26px 30px;
+            }
+
+            .login-header {
+                margin-bottom: 18px;
+            }
+
+            .login-icon {
+                width: 44px;
+                height: 44px;
+
+                margin-bottom: 10px;
+            }
+
+            .login-form {
+                gap: 13px;
+            }
+        }
+
+
+        @media (prefers-reduced-motion: reduce) {
+
+            .login-submit,
+            .register-button {
+                transition: none;
+            }
+        }
+    </style>
+</head>
+
+
+<body>
+
+<main class="login-page">
+
+
+    <!-- =====================================================
+         LEFT SHOWCASE
+         ===================================================== -->
+
+    <section
+            class="login-showcase"
+            aria-label="Library Management System information">
+
+
+        <!-- Brand -->
+
+        <div class="showcase-top">
+
+            <a
+                    th:href="@{/}"
+                    class="login-brand">
+
+                <span
+                        class="login-brand-icon"
+                        aria-hidden="true">
+                    📚
+                </span>
+
+                <span>
+                    Library Management System
+                </span>
+
+            </a>
+
+        </div>
+
+
+        <!-- Main Showcase -->
+
+        <div class="showcase-content">
+
+            <div class="showcase-eyebrow">
+
+                <span
+                        class="showcase-dot"
+                        aria-hidden="true">
+                </span>
+
+                Digital Library Platform
+
+            </div>
+
+
+            <h1>
+                Your library,
+                always within reach.
+            </h1>
+
+
+            <p class="showcase-description">
+
+                Access your books, reservations, due dates,
+                fines and library queries from one secure
+                and organized dashboard.
+
+            </p>
+
+
+            <div class="showcase-features">
+
+
+                <div class="showcase-feature">
+
+                    <span
+                            class="showcase-feature-icon"
+                            aria-hidden="true">
+                        📖
+                    </span>
+
+                    <h3>
+                        Manage Books
+                    </h3>
+
+                    <p>
+                        Keep track of your current borrowing.
+                    </p>
+
+                </div>
+
+
+                <div class="showcase-feature">
+
+                    <span
+                            class="showcase-feature-icon"
+                            aria-hidden="true">
+                        🔖
+                    </span>
+
+                    <h3>
+                        Reservations
+                    </h3>
+
+                    <p>
+                        Follow reserved books from one place.
+                    </p>
+
+                </div>
+
+
+                <div class="showcase-feature">
+
+                    <span
+                            class="showcase-feature-icon"
+                            aria-hidden="true">
+                        🛡️
+                    </span>
+
+                    <h3>
+                        Secure Access
+                    </h3>
+
+                    <p>
+                        Protected with role-based authentication.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Footer -->
+
+        <div class="showcase-footer">
+
+            © 2026 Library Management System
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         LOGIN SIDE
+         ===================================================== -->
+
+    <section class="login-form-side">
+
+        <div class="login-form-wrapper">
+
+
+            <!-- Mobile Brand -->
+
+            <div class="mobile-brand">
+
+                <a
+                        th:href="@{/}"
+                        class="navbar-brand">
+
+                    <span
+                            class="brand-icon"
+                            aria-hidden="true">
+                        📚
+                    </span>
+
+                    <span>
+                        Library Management System
+                    </span>
+
+                </a>
+
+            </div>
+
+
+            <!-- Login Card -->
+
+            <div class="login-card">
+
+
+                <!-- Header -->
+
+                <header class="login-header">
+
+                    <div
+                            class="login-icon"
+                            aria-hidden="true">
+                        🔐
+                    </div>
+
+
+                    <div class="login-eyebrow">
+                        Welcome Back
+                    </div>
+
+
+                    <h1>
+                        Sign in to your account
+                    </h1>
+
+
+                    <p>
+                        Enter your account details to access
+                        your library dashboard.
+                    </p>
+
+                </header>
+
+
+                <!-- =================================================
+                     LOGIN ERROR
+                     ================================================= -->
+
+                <div
+                        th:if="${param.error}"
+                        class="alert alert-danger"
+                        role="alert">
+
+                    <span
+                            class="alert-icon"
+                            aria-hidden="true">
+                        ✕
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            Unable to sign in
+                        </strong>
+
+                        <p>
+                            The email or password you entered
+                            is incorrect.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     LOGOUT SUCCESS
+                     ================================================= -->
+
+                <div
+                        th:if="${param.logout}"
+                        class="alert alert-success"
+                        role="status">
+
+                    <span
+                            class="alert-icon"
+                            aria-hidden="true">
+                        ✓
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            Signed out successfully
+                        </strong>
+
+                        <p>
+                            Your library session has been closed safely.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     REGISTRATION SUCCESS
+                     ================================================= -->
+
+                <div
+                        th:if="${param.registered}"
+                        class="alert alert-success"
+                        role="status">
+
+                    <span
+                            class="alert-icon"
+                            aria-hidden="true">
+                        ✓
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            Account created successfully
+                        </strong>
+
+                        <p>
+                            You can now sign in using your
+                            registered email address.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     LOGIN FORM
+                     ================================================= -->
+
+                <form
+                        th:action="@{/login}"
+                        method="post"
+                        class="login-form">
+
+
+                    <!-- CSRF -->
+
+                    <input
+                            type="hidden"
+                            th:name="${_csrf.parameterName}"
+                            th:value="${_csrf.token}">
+
+
+                    <!-- Email -->
+
+                    <div class="login-form-group">
+
+                        <label for="username">
+                            Email address
+                        </label>
+
+                        <div class="login-input-wrapper">
+
+                            <span
+                                    class="login-input-icon"
+                                    aria-hidden="true">
+                                ✉
+                            </span>
+
+                            <input
+                                    type="email"
+                                    id="username"
+                                    name="username"
+                                    placeholder="Enter your email address"
+                                    autocomplete="email"
+                                    inputmode="email"
+                                    required>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Password -->
+
+                    <div class="login-form-group">
+
+                        <label for="password">
+                            Password
+                        </label>
+
+                        <div class="login-input-wrapper">
+
+                            <span
+                                    class="login-input-icon"
+                                    aria-hidden="true">
+                                🔑
+                            </span>
+
+                            <input
+                                    type="password"
+                                    id="password"
+                                    name="password"
+                                    placeholder="Enter your password"
+                                    autocomplete="current-password"
+                                    required>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Submit -->
+
+                    <button
+                            type="submit"
+                            class="btn btn-primary login-submit">
+
+                        Sign In
+
+                        <span aria-hidden="true">
+                            →
+                        </span>
+
+                    </button>
+
+                </form>
+
+
+                <!-- =================================================
+                     REGISTER
+                     ================================================= -->
+
+                <div class="login-divider">
+                    New to the library?
+                </div>
+
+
+                <a
+                        th:href="@{/register}"
+                        class="btn btn-secondary register-button">
+
+                    Create an Account
+
+                </a>
+
+            </div>
+
+
+            <!-- =====================================================
+                 BACK TO HOME
+                 ===================================================== -->
+
+            <div class="login-footer">
+
+                <a th:href="@{/}">
+
+                    <span aria-hidden="true">
+                        ←
+                    </span>
+
+                    Back to Home
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+</body>
+
+</html>

@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0">
+
+    <meta
+            name="description"
+            content="Contact the library and submit a query.">
+
+    <title>Contact Library | Library Management System</title>
+
+    <link
+            rel="stylesheet"
+            th:href="@{/css/style.css}">
+
+    <style>
+        /* =========================================================
+           CONTACT PAGE
+           ========================================================= */
+
+        .contact-page {
+            min-height: 100vh;
+
+            background:
+                radial-gradient(
+                    circle at 92% 8%,
+                    rgba(15, 118, 110, 0.05),
+                    transparent 22%
+                ),
+                var(--background);
+        }
+
+
+        /* =========================================================
+           NAVBAR
+           ========================================================= */
+
+        .contact-navbar .navbar-inner {
+            min-height: 68px;
+        }
+
+        .contact-nav {
+            display: flex;
+            align-items: center;
+
+            gap: 6px;
+
+            margin-left: auto;
+        }
+
+        .contact-nav .active {
+            background: var(--primary-light);
+
+            color: var(--primary-dark);
+        }
+
+
+        /* =========================================================
+           PAGE
+           ========================================================= */
+
+        .contact-container {
+            padding-top: 31px;
+        }
+
+
+        /* =========================================================
+           HEADER
+           ========================================================= */
+
+        .contact-header {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+
+            gap: 24px;
+
+            margin-bottom: 22px;
+        }
+
+        .contact-heading {
+            max-width: 720px;
+        }
+
+        .contact-eyebrow {
+            margin-bottom: 7px;
+
+            color: var(--primary);
+
+            font-size: 10px;
+            font-weight: 800;
+
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        .contact-header h1 {
+            margin: 0 0 7px;
+
+            font-size: clamp(29px, 3vw, 36px);
+
+            letter-spacing: -0.035em;
+        }
+
+        .contact-header p {
+            margin: 0;
+
+            font-size: 13px;
+            line-height: 1.65;
+        }
+
+        .contact-header-actions {
+            display: flex;
+            align-items: center;
+
+            gap: 8px;
+
+            flex-wrap: wrap;
+        }
+
+
+        /* =========================================================
+           GRID
+           ========================================================= */
+
+        .contact-layout {
+            display: grid;
+
+            grid-template-columns:
+                minmax(0, 1.4fr)
+                minmax(280px, 0.6fr);
+
+            gap: 18px;
+        }
+
+
+        /* =========================================================
+           FORM CARD
+           ========================================================= */
+
+        .contact-form-card {
+            padding: 24px;
+
+            background: var(--surface);
+
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+
+            box-shadow: var(--shadow-sm);
+        }
+
+        .contact-form-header {
+            margin-bottom: 20px;
+        }
+
+        .contact-form-header h2 {
+            margin: 0 0 5px;
+
+            font-size: 19px;
+        }
+
+        .contact-form-header p {
+            margin: 0;
+
+            font-size: 11px;
+        }
+
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+
+            gap: 17px;
+        }
+
+        .contact-form-group {
+            margin: 0;
+        }
+
+        .contact-form-group label {
+            display: block;
+
+            margin-bottom: 6px;
+
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .contact-form input,
+        .contact-form textarea {
+            width: 100%;
+            max-width: none;
+        }
+
+        .contact-form textarea {
+            min-height: 180px;
+        }
+
+        .contact-submit {
+            align-self: flex-start;
+
+            min-height: 43px;
+        }
+
+
+        /* =========================================================
+           SIDE PANEL
+           ========================================================= */
+
+        .contact-side {
+            display: flex;
+            flex-direction: column;
+
+            gap: 14px;
+        }
+
+        .contact-info-card {
+            padding: 19px;
+
+            background: var(--surface);
+
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+
+            box-shadow: var(--shadow-sm);
+        }
+
+        .contact-info-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            width: 40px;
+            height: 40px;
+
+            margin-bottom: 12px;
+
+            background: var(--primary-light);
+
+            border: 1px solid var(--primary-border);
+            border-radius: 11px;
+
+            color: var(--primary-dark);
+
+            font-size: 17px;
+        }
+
+        .contact-info-card h3 {
+            margin: 0 0 5px;
+
+            font-size: 14px;
+        }
+
+        .contact-info-card p {
+            margin: 0;
+
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        .contact-info-card .btn {
+            width: 100%;
+
+            margin-top: 14px;
+        }
+
+
+        /* =========================================================
+           SUCCESS / ERROR
+           ========================================================= */
+
+        .contact-message {
+            margin-bottom: 18px;
+        }
+
+        .contact-message .alert {
+            margin: 0;
+        }
+
+
+        /* =========================================================
+           FOOTER NAV
+           ========================================================= */
+
+        .contact-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 18px;
+
+            margin-top: 24px;
+
+            padding: 15px 17px;
+
+            background: var(--surface);
+
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+
+            box-shadow: var(--shadow-xs);
+        }
+
+        .contact-footer p {
+            margin: 0;
+
+            font-size: 11px;
+        }
+
+        .contact-footer-links {
+            display: flex;
+            align-items: center;
+
+            gap: 8px;
+
+            flex-wrap: wrap;
+        }
+
+
+        /* =========================================================
+           RESPONSIVE
+           ========================================================= */
+
+        @media (max-width: 900px) {
+
+            .contact-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-side {
+                display: grid;
+
+                grid-template-columns:
+                    repeat(2, minmax(0, 1fr));
+            }
+        }
+
+
+        @media (max-width: 820px) {
+
+            .contact-navbar .navbar-inner {
+                flex-wrap: wrap;
+
+                padding-top: 10px;
+                padding-bottom: 10px;
+            }
+
+            .contact-nav {
+                width: 100%;
+
+                justify-content: flex-start;
+            }
+
+            .contact-header {
+                align-items: flex-start;
+
+                flex-direction: column;
+            }
+        }
+
+
+        @media (max-width: 650px) {
+
+            .contact-container {
+                padding-top: 22px;
+            }
+
+            .contact-side {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-footer {
+                align-items: flex-start;
+
+                flex-direction: column;
+            }
+
+            .contact-submit {
+                width: 100%;
+            }
+        }
+
+
+        @media (max-width: 480px) {
+
+            .contact-navbar .navbar-brand span:last-child {
+                display: none;
+            }
+
+            .contact-nav {
+                width: auto;
+
+                margin-left: auto;
+            }
+
+            .contact-header-actions {
+                width: 100%;
+            }
+
+            .contact-header-actions .btn {
+                width: 100%;
+            }
+
+            .contact-form-card {
+                padding: 18px;
+            }
+        }
+    </style>
+</head>
+
+
+<body class="contact-page">
+
+<!-- =========================================================
+     NAVBAR
+     ========================================================= -->
+
+<nav
+        class="navbar contact-navbar"
+        aria-label="Library navigation">
+
+    <div class="navbar-inner">
+
+        <a
+                th:href="@{/}"
+                class="navbar-brand">
+
+            <span
+                    class="brand-icon"
+                    aria-hidden="true">
+                📚
+            </span>
+
+            <span>
+                Library Management System
+            </span>
+
+        </a>
+
+
+        <div class="contact-nav">
+
+            <a
+                    th:href="@{/dashboard}"
+                    class="navbar-link">
+                Dashboard
+            </a>
+
+            <a
+                    th:href="@{/books}"
+                    class="navbar-link">
+                Catalogue
+            </a>
+
+            <a
+                    th:href="@{/my-books}"
+                    class="navbar-link">
+                My Books
+            </a>
+
+            <a
+                    th:href="@{/contact}"
+                    class="navbar-link active">
+                Contact
+            </a>
+
+        </div>
+
+    </div>
+
+</nav>
+
+
+<!-- =========================================================
+     MAIN
+     ========================================================= -->
+
+<main>
+
+    <div class="container contact-container">
+
+
+        <!-- =====================================================
+             HEADER
+             ===================================================== -->
+
+        <header class="contact-header">
+
+            <div class="contact-heading">
+
+                <div class="contact-eyebrow">
+                    Library Support
+                </div>
+
+                <h1>
+                    Contact the Library
+                </h1>
+
+                <p>
+                    Send a question to the library team and track
+                    the status of your submitted queries from
+                    your account.
+                </p>
+
+            </div>
+
+
+            <div class="contact-header-actions">
+
+                <a
+                        th:href="@{/dashboard}"
+                        class="btn btn-secondary">
+
+                    ← Dashboard
+
+                </a>
+
+                <a
+                        th:href="@{/my-queries}"
+                        class="btn btn-primary">
+
+                    📋 My Queries
+
+                </a>
+
+            </div>
+
+        </header>
+
+
+        <!-- =====================================================
+             MESSAGES
+             ===================================================== -->
+
+        <div class="contact-message">
+
+
+            <!-- Success -->
+
+            <div
+                    th:if="${param.success}"
+                    class="alert alert-success"
+                    role="status">
+
+                <span
+                        class="alert-icon"
+                        aria-hidden="true">
+                    ✓
+                </span>
+
+                <div>
+
+                    <strong>
+                        Query submitted successfully
+                    </strong>
+
+                    <p>
+                        The library administrator will review
+                        your message.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- Error -->
+
+            <div
+                    th:if="${error}"
+                    class="alert alert-danger"
+                    role="alert">
+
+                <span
+                        class="alert-icon"
+                        aria-hidden="true">
+                    ✕
+                </span>
+
+                <div>
+
+                    <strong>
+                        Unable to submit query
+                    </strong>
+
+                    <p th:text="${error}">
+                        Something went wrong.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             CONTENT
+             ===================================================== -->
+
+        <div class="contact-layout">
+
+
+            <!-- =================================================
+                 FORM
+                 ================================================= -->
+
+            <section
+                    class="contact-form-card"
+                    aria-labelledby="contact-form-heading">
+
+                <div class="contact-form-header">
+
+                    <h2 id="contact-form-heading">
+                        Send a Query
+                    </h2>
+
+                    <p>
+                        Tell the library team what you need help with.
+                    </p>
+
+                </div>
+
+
+                <form
+                        th:action="@{/contact}"
+                        method="post"
+                        class="contact-form">
+
+
+                    <!-- CSRF -->
+
+                    <input
+                            type="hidden"
+                            th:name="${_csrf.parameterName}"
+                            th:value="${_csrf.token}">
+
+
+                    <!-- Subject -->
+
+                    <div class="contact-form-group">
+
+                        <label for="subject">
+                            Subject
+                        </label>
+
+                        <input
+                                type="text"
+                                id="subject"
+                                name="subject"
+                                th:value="${subject}"
+                                placeholder="Enter a short subject"
+                                autocomplete="off"
+                                required>
+
+                    </div>
+
+
+                    <!-- Message -->
+
+                    <div class="contact-form-group">
+
+                        <label for="message">
+                            Message
+                        </label>
+
+                        <textarea
+                                id="message"
+                                name="message"
+                                rows="8"
+                                placeholder="Describe your question or issue..."
+                                required
+                                th:text="${message}">
+                        </textarea>
+
+                    </div>
+
+
+                    <!-- Submit -->
+
+                    <button
+                            type="submit"
+                            class="btn btn-primary contact-submit">
+
+                        ✉ Submit Query
+
+                    </button>
+
+                </form>
+
+            </section>
+
+
+            <!-- =================================================
+                 SIDE INFORMATION
+                 ================================================= -->
+
+            <aside class="contact-side">
+
+
+                <div class="contact-info-card">
+
+                    <div
+                            class="contact-info-icon"
+                            aria-hidden="true">
+                        💬
+                    </div>
+
+                    <h3>
+                        Ask the library team
+                    </h3>
+
+                    <p>
+                        Use this form for questions about books,
+                        borrowing, reservations, fines or your
+                        library account.
+                    </p>
+
+                </div>
+
+
+                <div class="contact-info-card">
+
+                    <div
+                            class="contact-info-icon"
+                            aria-hidden="true">
+                        📋
+                    </div>
+
+                    <h3>
+                        Track your queries
+                    </h3>
+
+                    <p>
+                        Your submitted questions can be reviewed
+                        from the My Queries page.
+                    </p>
+
+                    <a
+                            th:href="@{/my-queries}"
+                            class="btn btn-secondary btn-sm">
+
+                        View My Queries
+
+                    </a>
+
+                </div>
+
+            </aside>
+
+        </div>
+
+
+        <!-- =====================================================
+             FOOTER NAVIGATION
+             ===================================================== -->
+
+        <div class="contact-footer">
+
+            <p>
+                You can return to your dashboard or review your
+                previously submitted queries at any time.
+            </p>
+
+
+            <div class="contact-footer-links">
+
+                <a
+                        th:href="@{/dashboard}"
+                        class="btn btn-secondary btn-sm">
+
+                    Dashboard
+
+                </a>
+
+                <a
+                        th:href="@{/my-queries}"
+                        class="btn btn-primary btn-sm">
+
+                    My Queries
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</main>
+
+</body>
+
+</html>

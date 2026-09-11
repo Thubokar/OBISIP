@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0">
+
+    <meta
+            name="description"
+            content="Create an account for the Library Management System.">
+
+    <title>Create Account | Library Management System</title>
+
+    <link
+            rel="stylesheet"
+            th:href="@{/css/style.css}">
+
+    <style>
+        /* =========================================================
+           REGISTER PAGE
+           ========================================================= */
+
+        .register-page {
+            min-height: 100vh;
+
+            display: grid;
+
+            grid-template-columns:
+                minmax(0, 1.05fr)
+                minmax(430px, 0.95fr);
+
+            background: var(--background);
+        }
+
+
+        /* =========================================================
+           LEFT PANEL
+           ========================================================= */
+
+        .register-showcase {
+            position: relative;
+
+            overflow: hidden;
+
+            min-height: 100vh;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+
+            padding: 42px 56px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #134e4a 0%,
+                    #0f766e 52%,
+                    #115e59 100%
+                );
+
+            color: #ffffff;
+        }
+
+        .register-showcase::before {
+            content: "";
+
+            position: absolute;
+
+            width: 450px;
+            height: 450px;
+
+            top: -245px;
+            right: -170px;
+
+            border-radius: 50%;
+
+            background:
+                rgba(255, 255, 255, 0.07);
+        }
+
+        .register-showcase::after {
+            content: "";
+
+            position: absolute;
+
+            width: 340px;
+            height: 340px;
+
+            bottom: -205px;
+            left: -125px;
+
+            border-radius: 50%;
+
+            background:
+                rgba(217, 119, 6, 0.17);
+        }
+
+        .showcase-top,
+        .showcase-content,
+        .showcase-footer {
+            position: relative;
+            z-index: 1;
+        }
+
+
+        /* =========================================================
+           BRAND
+           ========================================================= */
+
+        .register-brand {
+            display: inline-flex;
+            align-items: center;
+
+            gap: 11px;
+
+            color: #ffffff;
+
+            font-size: 17px;
+            font-weight: 800;
+
+            letter-spacing: -0.015em;
+        }
+
+        .register-brand:hover {
+            color: #ffffff;
+        }
+
+        .register-brand-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            width: 40px;
+            height: 40px;
+
+            background:
+                rgba(255, 255, 255, 0.12);
+
+            border:
+                1px solid rgba(255, 255, 255, 0.18);
+
+            border-radius: 11px;
+
+            font-size: 19px;
+
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+
+        /* =========================================================
+           SHOWCASE
+           ========================================================= */
+
+        .showcase-content {
+            max-width: 620px;
+
+            margin: auto 0;
+        }
+
+        .showcase-eyebrow {
+            display: inline-flex;
+            align-items: center;
+
+            gap: 7px;
+
+            margin-bottom: 18px;
+
+            padding: 6px 10px;
+
+            background:
+                rgba(255, 255, 255, 0.09);
+
+            border:
+                1px solid rgba(255, 255, 255, 0.14);
+
+            border-radius: 999px;
+
+            color:
+                rgba(255, 255, 255, 0.88);
+
+            font-size: 10px;
+            font-weight: 800;
+
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .showcase-dot {
+            width: 6px;
+            height: 6px;
+
+            border-radius: 50%;
+
+            background: #fbbf24;
+        }
+
+        .showcase-content h1 {
+            max-width: 600px;
+
+            margin-bottom: 18px;
+
+            color: #ffffff;
+
+            font-size: clamp(38px, 4vw, 56px);
+            font-weight: 800;
+
+            line-height: 1.06;
+
+            letter-spacing: -0.045em;
+        }
+
+        .showcase-description {
+            max-width: 570px;
+
+            margin: 0;
+
+            color:
+                rgba(255, 255, 255, 0.78);
+
+            font-size: 15px;
+            line-height: 1.75;
+        }
+
+
+        /* =========================================================
+           FEATURE LIST
+           ========================================================= */
+
+        .showcase-benefits {
+            display: flex;
+            flex-direction: column;
+
+            gap: 12px;
+
+            margin-top: 30px;
+        }
+
+        .benefit-item {
+            display: flex;
+            align-items: flex-start;
+
+            gap: 11px;
+        }
+
+        .benefit-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            width: 31px;
+            height: 31px;
+
+            flex: 0 0 auto;
+
+            margin-top: 1px;
+
+            background:
+                rgba(255, 255, 255, 0.11);
+
+            border:
+                1px solid rgba(255, 255, 255, 0.12);
+
+            border-radius: 9px;
+
+            font-size: 13px;
+        }
+
+        .benefit-copy h3 {
+            margin: 0 0 2px;
+
+            color: #ffffff;
+
+            font-size: 12px;
+            font-weight: 750;
+        }
+
+        .benefit-copy p {
+            margin: 0;
+
+            color:
+                rgba(255, 255, 255, 0.64);
+
+            font-size: 10px;
+            line-height: 1.5;
+        }
+
+
+        /* =========================================================
+           SHOWCASE FOOTER
+           ========================================================= */
+
+        .showcase-footer {
+            color:
+                rgba(255, 255, 255, 0.56);
+
+            font-size: 11px;
+        }
+
+
+        /* =========================================================
+           FORM SIDE
+           ========================================================= */
+
+        .register-form-side {
+            min-height: 100vh;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 36px 40px;
+
+            background:
+                radial-gradient(
+                    circle at 90% 10%,
+                    rgba(15, 118, 110, 0.055),
+                    transparent 24%
+                ),
+                var(--background);
+        }
+
+        .register-form-wrapper {
+            width: 100%;
+            max-width: 450px;
+        }
+
+
+        /* =========================================================
+           MOBILE BRAND
+           ========================================================= */
+
+        .mobile-brand {
+            display: none;
+
+            justify-content: center;
+
+            margin-bottom: 18px;
+        }
+
+        .mobile-brand .navbar-brand {
+            font-size: 17px;
+        }
+
+
+        /* =========================================================
+           REGISTER CARD
+           ========================================================= */
+
+        .register-card {
+            padding: 31px 34px;
+
+            background: var(--surface);
+
+            border: 1px solid var(--border);
+            border-radius: 20px;
+
+            box-shadow:
+                0 20px 46px rgba(15, 23, 42, 0.09);
+        }
+
+        .register-header {
+            margin-bottom: 22px;
+        }
+
+        .register-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            width: 48px;
+            height: 48px;
+
+            margin-bottom: 14px;
+
+            background: var(--primary-light);
+
+            border: 1px solid var(--primary-border);
+            border-radius: 14px;
+
+            color: var(--primary-dark);
+
+            font-size: 20px;
+        }
+
+        .register-eyebrow {
+            margin-bottom: 6px;
+
+            color: var(--primary);
+
+            font-size: 10px;
+            font-weight: 800;
+
+            letter-spacing: 0.13em;
+            text-transform: uppercase;
+        }
+
+        .register-header h1 {
+            margin: 0 0 7px;
+
+            font-size: 27px;
+            font-weight: 800;
+
+            letter-spacing: -0.03em;
+        }
+
+        .register-header p {
+            margin: 0;
+
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+
+        /* =========================================================
+           ERROR
+           ========================================================= */
+
+        .register-card .alert {
+            margin: 0 0 17px;
+
+            padding: 11px 12px;
+        }
+
+
+        /* =========================================================
+           FORM
+           ========================================================= */
+
+        .register-form {
+            display: flex;
+            flex-direction: column;
+
+            gap: 14px;
+        }
+
+        .register-form-group {
+            margin: 0;
+        }
+
+        .register-form-group label {
+            display: block;
+
+            margin-bottom: 5px;
+
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .register-input-wrapper {
+            position: relative;
+        }
+
+        .register-input-icon {
+            position: absolute;
+
+            top: 50%;
+            left: 13px;
+
+            transform: translateY(-50%);
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            width: 18px;
+
+            color: var(--text-muted);
+
+            font-size: 13px;
+
+            pointer-events: none;
+        }
+
+        .register-input-wrapper input {
+            width: 100%;
+            max-width: none;
+
+            min-height: 43px;
+
+            padding:
+                9px
+                13px
+                9px
+                41px;
+        }
+
+        .password-help {
+            display: flex;
+            align-items: center;
+
+            gap: 6px;
+
+            margin: 5px 0 0;
+
+            color: var(--text-muted);
+
+            font-size: 10px;
+            line-height: 1.4;
+        }
+
+        .password-help-icon {
+            color: var(--primary);
+
+            font-weight: 800;
+        }
+
+
+        /* =========================================================
+           SUBMIT
+           ========================================================= */
+
+        .register-submit {
+            width: 100%;
+
+            min-height: 44px;
+
+            margin-top: 2px;
+
+            font-size: 13px;
+        }
+
+
+        /* =========================================================
+           DIVIDER
+           ========================================================= */
+
+        .register-divider {
+            display: flex;
+            align-items: center;
+
+            gap: 12px;
+
+            margin: 18px 0 15px;
+
+            color: var(--text-muted);
+
+            font-size: 11px;
+            font-weight: 650;
+        }
+
+        .register-divider::before,
+        .register-divider::after {
+            content: "";
+
+            flex: 1;
+
+            height: 1px;
+
+            background: var(--border);
+        }
+
+
+        /* =========================================================
+           LOGIN BUTTON
+           ========================================================= */
+
+        .login-button {
+            width: 100%;
+
+            min-height: 43px;
+        }
+
+
+        /* =========================================================
+           FOOTER
+           ========================================================= */
+
+        .register-footer {
+            margin-top: 16px;
+
+            text-align: center;
+        }
+
+        .register-footer a {
+            display: inline-flex;
+            align-items: center;
+
+            gap: 6px;
+
+            color: var(--text-secondary);
+
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .register-footer a:hover {
+            color: var(--primary);
+        }
+
+
+        /* =========================================================
+           RESPONSIVE
+           ========================================================= */
+
+        @media (max-width: 1050px) {
+
+            .register-page {
+                grid-template-columns:
+                    minmax(0, 0.9fr)
+                    minmax(410px, 1.1fr);
+            }
+
+            .register-showcase {
+                padding: 38px;
+            }
+        }
+
+
+        @media (max-width: 820px) {
+
+            .register-page {
+                display: block;
+            }
+
+            .register-showcase {
+                display: none;
+            }
+
+            .register-form-side {
+                min-height: 100vh;
+
+                padding: 25px 20px;
+            }
+
+            .mobile-brand {
+                display: flex;
+            }
+        }
+
+
+        @media (max-width: 520px) {
+
+            .register-form-side {
+                align-items: flex-start;
+
+                padding: 20px 15px;
+            }
+
+            .register-form-wrapper {
+                max-width: none;
+            }
+
+            .register-card {
+                padding: 25px 20px;
+
+                border-radius: 16px;
+            }
+
+            .register-header {
+                margin-bottom: 19px;
+            }
+
+            .register-icon {
+                width: 44px;
+                height: 44px;
+
+                margin-bottom: 12px;
+
+                font-size: 18px;
+            }
+
+            .register-header h1 {
+                font-size: 24px;
+            }
+        }
+
+
+        @media (max-height: 720px) and (min-width: 821px) {
+
+            .register-showcase {
+                padding-top: 26px;
+                padding-bottom: 26px;
+            }
+
+            .showcase-content h1 {
+                font-size: 39px;
+            }
+
+            .showcase-description {
+                font-size: 13px;
+            }
+
+            .showcase-benefits {
+                gap: 8px;
+
+                margin-top: 18px;
+            }
+
+            .register-form-side {
+                padding-top: 18px;
+                padding-bottom: 18px;
+            }
+
+            .register-card {
+                padding: 23px 30px;
+            }
+
+            .register-header {
+                margin-bottom: 15px;
+            }
+
+            .register-icon {
+                width: 40px;
+                height: 40px;
+
+                margin-bottom: 8px;
+            }
+
+            .register-form {
+                gap: 10px;
+            }
+
+            .register-divider {
+                margin-top: 14px;
+            }
+        }
+
+
+        @media (prefers-reduced-motion: reduce) {
+
+            .register-submit,
+            .login-button {
+                transition: none;
+            }
+        }
+    </style>
+</head>
+
+
+<body>
+
+<main class="register-page">
+
+
+    <!-- =====================================================
+         LEFT SHOWCASE
+         ===================================================== -->
+
+    <section
+            class="register-showcase"
+            aria-label="Library membership information">
+
+
+        <!-- Brand -->
+
+        <div class="showcase-top">
+
+            <a
+                    th:href="@{/}"
+                    class="register-brand">
+
+                <span
+                        class="register-brand-icon"
+                        aria-hidden="true">
+                    📚
+                </span>
+
+                <span>
+                    Library Management System
+                </span>
+
+            </a>
+
+        </div>
+
+
+        <!-- Showcase Content -->
+
+        <div class="showcase-content">
+
+
+            <div class="showcase-eyebrow">
+
+                <span
+                        class="showcase-dot"
+                        aria-hidden="true">
+                </span>
+
+                Library Membership
+
+            </div>
+
+
+            <h1>
+                Start your library journey today.
+            </h1>
+
+
+            <p class="showcase-description">
+
+                Create your account to discover books,
+                manage borrowing, reserve titles and keep
+                all of your library activity organized.
+
+            </p>
+
+
+            <div class="showcase-benefits">
+
+
+                <div class="benefit-item">
+
+                    <span
+                            class="benefit-icon"
+                            aria-hidden="true">
+                        📚
+                    </span>
+
+                    <div class="benefit-copy">
+
+                        <h3>
+                            Discover the collection
+                        </h3>
+
+                        <p>
+                            Browse and search books from the library catalogue.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="benefit-item">
+
+                    <span
+                            class="benefit-icon"
+                            aria-hidden="true">
+                        📖
+                    </span>
+
+                    <div class="benefit-copy">
+
+                        <h3>
+                            Manage your borrowing
+                        </h3>
+
+                        <p>
+                            Keep track of issued books and due dates.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="benefit-item">
+
+                    <span
+                            class="benefit-icon"
+                            aria-hidden="true">
+                        🔖
+                    </span>
+
+                    <div class="benefit-copy">
+
+                        <h3>
+                            Reserve unavailable books
+                        </h3>
+
+                        <p>
+                            Track reservations directly from your account.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="benefit-item">
+
+                    <span
+                            class="benefit-icon"
+                            aria-hidden="true">
+                        🛡️
+                    </span>
+
+                    <div class="benefit-copy">
+
+                        <h3>
+                            Secure member access
+                        </h3>
+
+                        <p>
+                            Your personal library activity stays protected.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Footer -->
+
+        <div class="showcase-footer">
+
+            © 2026 Library Management System
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         REGISTRATION FORM
+         ===================================================== -->
+
+    <section class="register-form-side">
+
+        <div class="register-form-wrapper">
+
+
+            <!-- Mobile Brand -->
+
+            <div class="mobile-brand">
+
+                <a
+                        th:href="@{/}"
+                        class="navbar-brand">
+
+                    <span
+                            class="brand-icon"
+                            aria-hidden="true">
+                        📚
+                    </span>
+
+                    <span>
+                        Library Management System
+                    </span>
+
+                </a>
+
+            </div>
+
+
+            <!-- Card -->
+
+            <div class="register-card">
+
+
+                <!-- Header -->
+
+                <header class="register-header">
+
+                    <div
+                            class="register-icon"
+                            aria-hidden="true">
+                        ✨
+                    </div>
+
+
+                    <div class="register-eyebrow">
+                        Get Started
+                    </div>
+
+
+                    <h1>
+                        Create your account
+                    </h1>
+
+
+                    <p>
+                        Join the library and start managing
+                        your books from one place.
+                    </p>
+
+                </header>
+
+
+                <!-- =================================================
+                     BACKEND ERROR
+                     ================================================= -->
+
+                <div
+                        th:if="${error}"
+                        class="alert alert-danger"
+                        role="alert">
+
+                    <span
+                            class="alert-icon"
+                            aria-hidden="true">
+                        ✕
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            Unable to create account
+                        </strong>
+
+                        <p
+                                th:text="${error}">
+                            Something went wrong.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     REGISTRATION FORM
+                     ================================================= -->
+
+                <form
+                        th:action="@{/register}"
+                        method="post"
+                        class="register-form">
+
+
+                    <!-- CSRF -->
+
+                    <input
+                            type="hidden"
+                            th:name="${_csrf.parameterName}"
+                            th:value="${_csrf.token}">
+
+
+                    <!-- Full Name -->
+
+                    <div class="register-form-group">
+
+                        <label for="name">
+                            Full name
+                        </label>
+
+                        <div class="register-input-wrapper">
+
+                            <span
+                                    class="register-input-icon"
+                                    aria-hidden="true">
+                                👤
+                            </span>
+
+                            <input
+                                    type="text"
+                                    id="name"
+                                    name="name"
+                                    placeholder="Enter your full name"
+                                    autocomplete="name"
+                                    required>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Email -->
+
+                    <div class="register-form-group">
+
+                        <label for="email">
+                            Email address
+                        </label>
+
+                        <div class="register-input-wrapper">
+
+                            <span
+                                    class="register-input-icon"
+                                    aria-hidden="true">
+                                ✉
+                            </span>
+
+                            <input
+                                    type="email"
+                                    id="email"
+                                    name="email"
+                                    placeholder="Enter your email address"
+                                    autocomplete="email"
+                                    inputmode="email"
+                                    required>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Password -->
+
+                    <div class="register-form-group">
+
+                        <label for="password">
+                            Password
+                        </label>
+
+                        <div class="register-input-wrapper">
+
+                            <span
+                                    class="register-input-icon"
+                                    aria-hidden="true">
+                                🔑
+                            </span>
+
+                            <input
+                                    type="password"
+                                    id="password"
+                                    name="password"
+                                    minlength="6"
+                                    placeholder="Create a password"
+                                    autocomplete="new-password"
+                                    required>
+
+                        </div>
+
+
+                        <p class="password-help">
+
+                            <span
+                                    class="password-help-icon"
+                                    aria-hidden="true">
+                                ✓
+                            </span>
+
+                            Use at least 6 characters.
+
+                        </p>
+
+                    </div>
+
+
+                    <!-- Submit -->
+
+                    <button
+                            type="submit"
+                            class="btn btn-primary register-submit">
+
+                        Create Account
+
+                        <span aria-hidden="true">
+                            →
+                        </span>
+
+                    </button>
+
+                </form>
+
+
+                <!-- =================================================
+                     SIGN IN
+                     ================================================= -->
+
+                <div class="register-divider">
+                    Already have an account?
+                </div>
+
+
+                <a
+                        th:href="@{/login}"
+                        class="btn btn-secondary login-button">
+
+                    Sign In Instead
+
+                </a>
+
+            </div>
+
+
+            <!-- =====================================================
+                 BACK HOME
+                 ===================================================== -->
+
+            <div class="register-footer">
+
+                <a th:href="@{/}">
+
+                    <span aria-hidden="true">
+                        ←
+                    </span>
+
+                    Back to Home
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+</body>
+
+</html>

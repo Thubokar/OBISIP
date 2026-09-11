@@ -1,0 +1,1289 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0">
+
+    <meta
+            name="description"
+            content="Review and resolve library contact queries.">
+
+    <title>Contact Queries | Admin</title>
+
+    <link
+            rel="stylesheet"
+            th:href="@{/css/style.css}">
+
+    <style>
+        /* =========================================================
+           ADMIN CONTACT / QUERY MANAGEMENT
+           ========================================================= */
+
+        .admin-contact-page {
+            min-height: 100vh;
+
+            background:
+                radial-gradient(
+                    circle at 94% 7%,
+                    rgba(217, 119, 6, 0.045),
+                    transparent 22%
+                ),
+                var(--background);
+        }
+
+
+        /* =========================================================
+           NAVBAR
+           ========================================================= */
+
+        .admin-contact-navbar .navbar-inner {
+            min-height: 68px;
+        }
+
+        .admin-contact-nav {
+            display: flex;
+            align-items: center;
+
+            gap: 6px;
+
+            margin-left: auto;
+        }
+
+        .admin-contact-nav .active {
+            background: var(--accent-light);
+
+            color: var(--accent-dark);
+        }
+
+
+        /* =========================================================
+           PAGE
+           ========================================================= */
+
+        .admin-contact-container {
+            padding-top: 30px;
+        }
+
+
+        /* =========================================================
+           HERO
+           ========================================================= */
+
+        .admin-contact-hero {
+            position: relative;
+
+            overflow: hidden;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 24px;
+
+            padding: 29px 31px;
+
+            margin-bottom: 21px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #134e4a 0%,
+                    #0f766e 54%,
+                    #115e59 100%
+                );
+
+            border-radius: var(--radius-xl);
+
+            box-shadow:
+                0 16px 34px rgba(15, 118, 110, 0.15);
+        }
+
+        .admin-contact-hero::before {
+            content: "";
+
+            position: absolute;
+
+            width: 230px;
+            height: 230px;
+
+            top: -145px;
+            right: -55px;
+
+            border-radius: 50%;
+
+            background:
+                rgba(255, 255, 255, 0.075);
+        }
+
+        .admin-contact-hero::after {
+            content: "";
+
+            position: absolute;
+
+            width: 150px;
+            height: 150px;
+
+            right: 120px;
+            bottom: -105px;
+
+            border-radius: 50%;
+
+            background:
+                rgba(217, 119, 6, 0.18);
+        }
+
+        .admin-contact-hero-copy,
+        .admin-contact-hero-actions {
+            position: relative;
+            z-index: 1;
+        }
+
+        .admin-contact-eyebrow {
+            margin-bottom: 7px;
+
+            color:
+                rgba(255, 255, 255, 0.72);
+
+            font-size: 10px;
+            font-weight: 800;
+
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        .admin-contact-hero h1 {
+            margin: 0 0 7px;
+
+            color: #ffffff;
+
+            font-size: clamp(28px, 3vw, 35px);
+
+            letter-spacing: -0.035em;
+        }
+
+        .admin-contact-hero p {
+            max-width: 700px;
+
+            margin: 0;
+
+            color:
+                rgba(255, 255, 255, 0.78);
+
+            font-size: 13px;
+            line-height: 1.65;
+        }
+
+        .admin-contact-hero-actions {
+            flex: 0 0 auto;
+        }
+
+        .admin-dashboard-button {
+            background:
+                rgba(255, 255, 255, 0.08);
+
+            border-color:
+                rgba(255, 255, 255, 0.25);
+
+            color: #ffffff;
+
+            box-shadow: none;
+        }
+
+        .admin-dashboard-button:hover {
+            background:
+                rgba(255, 255, 255, 0.14);
+
+            border-color:
+                rgba(255, 255, 255, 0.36);
+
+            color: #ffffff;
+
+            box-shadow: none;
+        }
+
+
+        /* =========================================================
+           ALERT
+           ========================================================= */
+
+        .admin-contact-alerts {
+            margin-bottom: 18px;
+        }
+
+        .admin-contact-alerts .alert {
+            margin: 0;
+        }
+
+
+        /* =========================================================
+           TOOLBAR
+           ========================================================= */
+
+        .queries-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 16px;
+
+            margin-bottom: 15px;
+        }
+
+        .queries-toolbar-copy h2 {
+            margin: 0 0 3px;
+
+            font-size: 19px;
+        }
+
+        .queries-toolbar-copy p {
+            margin: 0;
+
+            font-size: 11px;
+        }
+
+        .query-count {
+            display: inline-flex;
+            align-items: center;
+
+            gap: 6px;
+
+            padding: 6px 10px;
+
+            background: var(--accent-light);
+
+            border: 1px solid var(--accent-border);
+            border-radius: var(--radius-pill);
+
+            color: var(--accent-dark);
+
+            font-size: 10px;
+            font-weight: 800;
+
+            white-space: nowrap;
+        }
+
+
+        /* =========================================================
+           TABLE CARD
+           ========================================================= */
+
+        .queries-table-card {
+            overflow: hidden;
+
+            background: var(--surface);
+
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+
+            box-shadow: var(--shadow-sm);
+        }
+
+        .queries-table-wrap {
+            width: 100%;
+
+            overflow-x: auto;
+
+            scrollbar-width: thin;
+        }
+
+        .queries-table {
+            min-width: 1220px;
+
+            border: 0;
+            border-radius: 0;
+        }
+
+        .queries-table th:first-child,
+        .queries-table td:first-child {
+            padding-left: 22px;
+        }
+
+        .queries-table th:last-child,
+        .queries-table td:last-child {
+            padding-right: 22px;
+        }
+
+        .query-id {
+            color: var(--text-muted);
+
+            font-size: 11px;
+            font-weight: 750;
+        }
+
+
+        /* =========================================================
+           USER
+           ========================================================= */
+
+        .query-user {
+            display: flex;
+            align-items: center;
+
+            gap: 10px;
+
+            min-width: 160px;
+        }
+
+        .query-user-avatar {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            width: 36px;
+            height: 36px;
+
+            flex: 0 0 auto;
+
+            background: var(--primary-light);
+
+            border: 1px solid var(--primary-border);
+            border-radius: 10px;
+
+            color: var(--primary-dark);
+
+            font-size: 14px;
+        }
+
+        .query-user-name {
+            color: var(--text-heading);
+
+            font-weight: 750;
+        }
+
+        .query-user-email {
+            color: var(--text-secondary);
+
+            font-size: 12px;
+
+            white-space: nowrap;
+        }
+
+
+        /* =========================================================
+           QUERY CONTENT
+           ========================================================= */
+
+        .query-subject {
+            min-width: 170px;
+
+            color: var(--text-heading);
+
+            font-weight: 750;
+        }
+
+        .query-message {
+            max-width: 380px;
+            min-width: 280px;
+
+            color: var(--text-secondary);
+
+            font-size: 12px;
+            line-height: 1.55;
+
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+
+        .query-created {
+            color: var(--text-primary);
+
+            font-size: 12px;
+            font-weight: 650;
+
+            white-space: nowrap;
+        }
+
+
+        /* =========================================================
+           STATUS
+           ========================================================= */
+
+        .query-status {
+            display: inline-flex;
+            align-items: center;
+
+            gap: 6px;
+
+            padding: 5px 9px;
+
+            border-radius: var(--radius-pill);
+
+            font-size: 10px;
+            font-weight: 800;
+
+            white-space: nowrap;
+        }
+
+        .query-status::before {
+            content: "";
+
+            width: 6px;
+            height: 6px;
+
+            flex: 0 0 auto;
+
+            border-radius: 50%;
+
+            background: currentColor;
+        }
+
+        .query-status.resolved {
+            background: var(--success-light);
+
+            border: 1px solid var(--success-border);
+
+            color: var(--success-dark);
+        }
+
+        .query-status.pending {
+            background: var(--warning-light);
+
+            border: 1px solid var(--warning-border);
+
+            color: var(--warning-dark);
+        }
+
+
+        /* =========================================================
+           ACTION
+           ========================================================= */
+
+        .resolve-form {
+            display: inline-flex;
+        }
+
+        .resolve-button {
+            min-height: 34px;
+
+            padding: 7px 10px;
+
+            background: var(--success-light);
+
+            border-color: var(--success-border);
+
+            color: var(--success-dark);
+
+            box-shadow: none;
+
+            font-size: 11px;
+
+            white-space: nowrap;
+        }
+
+        .resolve-button:hover {
+            background: var(--success);
+
+            border-color: var(--success);
+
+            color: #ffffff;
+
+            box-shadow:
+                0 4px 10px rgba(21, 128, 61, 0.14);
+        }
+
+        .resolved-label {
+            display: inline-flex;
+            align-items: center;
+
+            gap: 5px;
+
+            color: var(--text-muted);
+
+            font-size: 10px;
+            font-weight: 700;
+
+            white-space: nowrap;
+        }
+
+
+        /* =========================================================
+           EMPTY STATE
+           ========================================================= */
+
+        .queries-empty {
+            padding: 62px 25px;
+
+            text-align: center;
+        }
+
+        .queries-empty-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            width: 72px;
+            height: 72px;
+
+            margin-bottom: 16px;
+
+            background: var(--success-light);
+
+            border: 1px solid var(--success-border);
+            border-radius: 50%;
+
+            color: var(--success-dark);
+
+            font-size: 29px;
+        }
+
+        .queries-empty h2 {
+            margin-bottom: 7px;
+
+            font-size: 21px;
+        }
+
+        .queries-empty p {
+            max-width: 500px;
+
+            margin: 0 auto;
+
+            font-size: 12px;
+        }
+
+
+        /* =========================================================
+           INFO GRID
+           ========================================================= */
+
+        .queries-info-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, minmax(0, 1fr));
+
+            gap: 12px;
+
+            margin-top: 20px;
+        }
+
+        .query-info-card {
+            display: flex;
+            align-items: flex-start;
+
+            gap: 11px;
+
+            padding: 15px;
+
+            background: var(--surface-soft);
+
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+        }
+
+        .query-info-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            width: 34px;
+            height: 34px;
+
+            flex: 0 0 auto;
+
+            background: var(--accent-light);
+
+            border-radius: 9px;
+
+            color: var(--accent-dark);
+
+            font-size: 14px;
+        }
+
+        .query-info-card h3 {
+            margin: 0 0 3px;
+
+            font-size: 12px;
+        }
+
+        .query-info-card p {
+            margin: 0;
+
+            font-size: 10px;
+            line-height: 1.5;
+        }
+
+
+        /* =========================================================
+           FOOTER
+           ========================================================= */
+
+        .admin-contact-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 18px;
+
+            margin-top: 24px;
+
+            padding: 15px 17px;
+
+            background: var(--surface);
+
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+
+            box-shadow: var(--shadow-xs);
+        }
+
+        .admin-contact-footer p {
+            margin: 0;
+
+            font-size: 11px;
+        }
+
+        .admin-contact-footer-links {
+            display: flex;
+            align-items: center;
+
+            gap: 8px;
+
+            flex-wrap: wrap;
+        }
+
+
+        /* =========================================================
+           RESPONSIVE
+           ========================================================= */
+
+        @media (max-width: 900px) {
+
+            .admin-contact-navbar .navbar-inner {
+                flex-wrap: wrap;
+
+                padding-top: 10px;
+                padding-bottom: 10px;
+            }
+
+            .admin-contact-nav {
+                width: 100%;
+
+                justify-content: flex-start;
+            }
+
+            .admin-contact-hero {
+                align-items: flex-start;
+
+                flex-direction: column;
+            }
+
+            .queries-info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+
+        @media (max-width: 650px) {
+
+            .admin-contact-container {
+                padding-top: 22px;
+            }
+
+            .queries-toolbar {
+                align-items: flex-start;
+
+                flex-direction: column;
+            }
+
+            .admin-contact-hero {
+                padding: 24px 21px;
+            }
+
+            .admin-contact-hero-actions {
+                width: 100%;
+            }
+
+            .admin-contact-hero-actions .btn {
+                width: 100%;
+            }
+
+            .admin-contact-footer {
+                align-items: flex-start;
+
+                flex-direction: column;
+            }
+        }
+
+
+        @media (max-width: 480px) {
+
+            .admin-contact-navbar .navbar-brand span:last-child {
+                display: none;
+            }
+
+            .admin-contact-nav {
+                width: auto;
+
+                margin-left: auto;
+            }
+        }
+    </style>
+</head>
+
+
+<body class="admin-contact-page">
+
+<!-- =========================================================
+     NAVBAR
+     ========================================================= -->
+
+<nav
+        class="navbar admin-contact-navbar"
+        aria-label="Admin navigation">
+
+    <div class="navbar-inner">
+
+        <a
+                th:href="@{/}"
+                class="navbar-brand">
+
+            <span
+                    class="brand-icon"
+                    aria-hidden="true">
+                📚
+            </span>
+
+            <span>
+                Library Management System
+            </span>
+
+        </a>
+
+
+        <div class="admin-contact-nav">
+
+            <a
+                    th:href="@{/dashboard}"
+                    class="navbar-link">
+                Dashboard
+            </a>
+
+            <a
+                    th:href="@{/admin/books}"
+                    class="navbar-link">
+                Books
+            </a>
+
+            <a
+                    th:href="@{/admin/users}"
+                    class="navbar-link">
+                Users
+            </a>
+
+            <a
+                    th:href="@{/admin/fines}"
+                    class="navbar-link">
+                Fines
+            </a>
+
+            <a
+                    th:href="@{/admin/contact}"
+                    class="navbar-link active">
+                Queries
+            </a>
+
+        </div>
+
+    </div>
+
+</nav>
+
+
+<!-- =========================================================
+     MAIN
+     ========================================================= -->
+
+<main>
+
+    <div class="container admin-contact-container">
+
+
+        <!-- =====================================================
+             HERO
+             ===================================================== -->
+
+        <section class="admin-contact-hero">
+
+            <div class="admin-contact-hero-copy">
+
+                <div class="admin-contact-eyebrow">
+                    Administration
+                </div>
+
+                <h1>
+                    Contact & Query Management
+                </h1>
+
+                <p>
+                    Review questions submitted by library members,
+                    monitor their resolution status and close queries
+                    once they have been handled.
+                </p>
+
+            </div>
+
+
+            <div class="admin-contact-hero-actions">
+
+                <a
+                        th:href="@{/dashboard}"
+                        class="btn admin-dashboard-button">
+
+                    ← Dashboard
+
+                </a>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             SUCCESS MESSAGE
+             ===================================================== -->
+
+        <div class="admin-contact-alerts">
+
+            <div
+                    th:if="${param.resolved}"
+                    class="alert alert-success"
+                    role="status">
+
+                <span
+                        class="alert-icon"
+                        aria-hidden="true">
+                    ✓
+                </span>
+
+                <div>
+
+                    <strong>
+                        Query resolved successfully
+                    </strong>
+
+                    <p>
+                        The selected contact query has been marked as resolved.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             TOOLBAR
+             ===================================================== -->
+
+        <div class="queries-toolbar">
+
+            <div class="queries-toolbar-copy">
+
+                <h2>
+                    User Queries
+                </h2>
+
+                <p>
+                    Review questions and support requests submitted by members.
+                </p>
+
+            </div>
+
+
+            <span
+                    th:if="${!#lists.isEmpty(messages)}"
+                    class="query-count">
+
+                <span aria-hidden="true">
+                    💬
+                </span>
+
+                <span th:text="${#lists.size(messages)}">
+                    0
+                </span>
+
+                <span>
+                    queries
+                </span>
+
+            </span>
+
+        </div>
+
+
+        <!-- =====================================================
+             QUERY RECORDS
+             ===================================================== -->
+
+        <section class="queries-table-card">
+
+
+            <!-- =================================================
+                 EMPTY STATE
+                 ================================================= -->
+
+            <div
+                    th:if="${#lists.isEmpty(messages)}"
+                    class="queries-empty">
+
+                <div
+                        class="queries-empty-icon"
+                        aria-hidden="true">
+                    ✓
+                </div>
+
+                <h2>
+                    No queries waiting
+                </h2>
+
+                <p>
+                    No contact queries have been submitted yet.
+                    New member queries will appear here when they arrive.
+                </p>
+
+            </div>
+
+
+            <!-- =================================================
+                 TABLE
+                 ================================================= -->
+
+            <div
+                    th:if="${!#lists.isEmpty(messages)}"
+                    class="queries-table-wrap">
+
+                <table class="queries-table">
+
+                    <thead>
+
+                    <tr>
+                        <th>ID</th>
+                        <th>User</th>
+                        <th>Email</th>
+                        <th>Subject</th>
+                        <th>Message</th>
+                        <th>Submitted At</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                    <tr th:each="message : ${messages}">
+
+
+                        <!-- ID -->
+
+                        <td>
+
+                            <span
+                                    class="query-id"
+                                    th:text="${message.id}">
+                                1
+                            </span>
+
+                        </td>
+
+
+                        <!-- User -->
+
+                        <td>
+
+                            <div class="query-user">
+
+                                <span
+                                        class="query-user-avatar"
+                                        aria-hidden="true">
+                                    👤
+                                </span>
+
+                                <span
+                                        class="query-user-name"
+                                        th:text="${message.user.name}">
+                                    User Name
+                                </span>
+
+                            </div>
+
+                        </td>
+
+
+                        <!-- Email -->
+
+                        <td>
+
+                            <span
+                                    class="query-user-email"
+                                    th:text="${message.user.email}">
+                                user@example.com
+                            </span>
+
+                        </td>
+
+
+                        <!-- Subject -->
+
+                        <td>
+
+                            <span
+                                    class="query-subject"
+                                    th:text="${message.subject}">
+                                Subject
+                            </span>
+
+                        </td>
+
+
+                        <!-- Message -->
+
+                        <td>
+
+                            <div
+                                    class="query-message"
+                                    th:text="${message.message}">
+                                Message
+                            </div>
+
+                        </td>
+
+
+                        <!-- Submitted At -->
+
+                        <td>
+
+                            <span
+                                    class="query-created"
+                                    th:text="${message.createdAt}">
+                                2026-09-11
+                            </span>
+
+                        </td>
+
+
+                        <!-- Status -->
+
+                        <td>
+
+                            <span
+                                    th:if="${message.resolved}"
+                                    class="query-status resolved">
+
+                                Resolved
+
+                            </span>
+
+
+                            <span
+                                    th:unless="${message.resolved}"
+                                    class="query-status pending">
+
+                                Pending
+
+                            </span>
+
+                        </td>
+
+
+                        <!-- Action -->
+
+                        <td>
+
+                            <form
+                                    th:if="${!message.resolved}"
+                                    th:action="@{/admin/contact/{id}/resolve(id=${message.id})}"
+                                    method="post"
+                                    class="resolve-form">
+
+                                <input
+                                        type="hidden"
+                                        th:name="${_csrf.parameterName}"
+                                        th:value="${_csrf.token}">
+
+                                <button
+                                        type="submit"
+                                        class="btn resolve-button">
+
+                                    ✓ Mark Resolved
+
+                                </button>
+
+                            </form>
+
+
+                            <span
+                                    th:if="${message.resolved}"
+                                    class="resolved-label">
+
+                                ✓ Already Resolved
+
+                            </span>
+
+                        </td>
+
+                    </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             INFORMATION
+             ===================================================== -->
+
+        <section
+                class="queries-info-grid"
+                aria-label="Query management information">
+
+
+            <div class="query-info-card">
+
+                <span
+                        class="query-info-icon"
+                        aria-hidden="true">
+                    💬
+                </span>
+
+                <div>
+
+                    <h3>
+                        Member questions
+                    </h3>
+
+                    <p>
+                        Queries submitted through the member
+                        contact form appear here for review.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="query-info-card">
+
+                <span
+                        class="query-info-icon"
+                        aria-hidden="true">
+                    ⏳
+                </span>
+
+                <div>
+
+                    <h3>
+                        Pending queries
+                    </h3>
+
+                    <p>
+                        Pending records still require attention
+                        from a library administrator.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="query-info-card">
+
+                <span
+                        class="query-info-icon"
+                        aria-hidden="true">
+                    ✓
+                </span>
+
+                <div>
+
+                    <h3>
+                        Resolve requests
+                    </h3>
+
+                    <p>
+                        Mark a query resolved after the member's
+                        request has been handled.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             FOOTER NAVIGATION
+             ===================================================== -->
+
+        <div class="admin-contact-footer">
+
+            <p>
+                Continue to another administrative area from
+                the shortcuts provided here.
+            </p>
+
+
+            <div class="admin-contact-footer-links">
+
+                <a
+                        th:href="@{/admin/books}"
+                        class="btn btn-secondary btn-sm">
+
+                    Books
+
+                </a>
+
+                <a
+                        th:href="@{/admin/issued-books}"
+                        class="btn btn-secondary btn-sm">
+
+                    Issued Books
+
+                </a>
+
+                <a
+                        th:href="@{/admin/users}"
+                        class="btn btn-secondary btn-sm">
+
+                    Users
+
+                </a>
+
+                <a
+                        th:href="@{/admin/fines}"
+                        class="btn btn-secondary btn-sm">
+
+                    Fines
+
+                </a>
+
+                <a
+                        th:href="@{/admin/reservations}"
+                        class="btn btn-primary btn-sm">
+
+                    Reservations
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</main>
+
+</body>
+
+</html>

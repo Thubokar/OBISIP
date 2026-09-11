@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0">
+
+    <meta
+            name="description"
+            content="Add or edit a library book record.">
+
+    <title
+            th:text="${editMode} ? 'Edit Book | Admin' : 'Add Book | Admin'">
+        Book Form | Admin
+    </title>
+
+    <link
+            rel="stylesheet"
+            th:href="@{/css/style.css}">
+
+    <style>
+        /* =========================================================
+           ADMIN BOOK FORM
+           ========================================================= */
+
+        .book-form-page {
+            min-height: 100vh;
+
+            background:
+                radial-gradient(
+                    circle at 93% 8%,
+                    rgba(217, 119, 6, 0.045),
+                    transparent 22%
+                ),
+                var(--background);
+        }
+
+
+        /* =========================================================
+           NAVBAR
+           ========================================================= */
+
+        .book-form-navbar .navbar-inner {
+            min-height: 68px;
+        }
+
+        .book-form-nav {
+            display: flex;
+            align-items: center;
+
+            gap: 6px;
+
+            margin-left: auto;
+        }
+
+        .book-form-nav .active {
+            background: var(--accent-light);
+
+            color: var(--accent-dark);
+        }
+
+
+        /* =========================================================
+           PAGE
+           ========================================================= */
+
+        .book-form-container {
+            padding-top: 30px;
+        }
+
+
+        /* =========================================================
+           HERO
+           ========================================================= */
+
+        .book-form-hero {
+            position: relative;
+
+            overflow: hidden;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 24px;
+
+            padding: 28px 30px;
+
+            margin-bottom: 20px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #134e4a 0%,
+                    #0f766e 56%,
+                    #115e59 100%
+                );
+
+            border-radius: var(--radius-xl);
+
+            box-shadow:
+                0 16px 34px rgba(15, 118, 110, 0.15);
+        }
+
+        .book-form-hero::before {
+            content: "";
+
+            position: absolute;
+
+            width: 230px;
+            height: 230px;
+
+            top: -145px;
+            right: -60px;
+
+            border-radius: 50%;
+
+            background:
+                rgba(255, 255, 255, 0.075);
+        }
+
+        .book-form-hero::after {
+            content: "";
+
+            position: absolute;
+
+            width: 150px;
+            height: 150px;
+
+            right: 130px;
+            bottom: -110px;
+
+            border-radius: 50%;
+
+            background:
+                rgba(217, 119, 6, 0.18);
+        }
+
+        .book-form-hero-copy,
+        .book-form-hero-actions {
+            position: relative;
+            z-index: 1;
+        }
+
+        .book-form-eyebrow {
+            margin-bottom: 7px;
+
+            color:
+                rgba(255, 255, 255, 0.72);
+
+            font-size: 10px;
+            font-weight: 800;
+
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        .book-form-hero h1 {
+            margin: 0 0 7px;
+
+            color: #ffffff;
+
+            font-size: clamp(28px, 3vw, 35px);
+
+            letter-spacing: -0.035em;
+        }
+
+        .book-form-hero p {
+            max-width: 690px;
+
+            margin: 0;
+
+            color:
+                rgba(255, 255, 255, 0.78);
+
+            font-size: 13px;
+            line-height: 1.65;
+        }
+
+        .book-form-hero-actions {
+            flex: 0 0 auto;
+        }
+
+        .back-admin-button {
+            background:
+                rgba(255, 255, 255, 0.08);
+
+            border-color:
+                rgba(255, 255, 255, 0.25);
+
+            color: #ffffff;
+
+            box-shadow: none;
+        }
+
+        .back-admin-button:hover {
+            background:
+                rgba(255, 255, 255, 0.14);
+
+            border-color:
+                rgba(255, 255, 255, 0.36);
+
+            color: #ffffff;
+
+            box-shadow: none;
+        }
+
+
+        /* =========================================================
+           LAYOUT
+           ========================================================= */
+
+        .book-form-layout {
+            display: grid;
+
+            grid-template-columns:
+                minmax(0, 1.35fr)
+                minmax(280px, 0.65fr);
+
+            gap: 18px;
+        }
+
+
+        /* =========================================================
+           MAIN FORM CARD
+           ========================================================= */
+
+        .book-form-card {
+            padding: 25px;
+
+            background: var(--surface);
+
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+
+            box-shadow: var(--shadow-sm);
+        }
+
+        .book-form-card-header {
+            margin-bottom: 21px;
+        }
+
+        .book-form-card-header h2 {
+            margin: 0 0 5px;
+
+            font-size: 19px;
+        }
+
+        .book-form-card-header p {
+            margin: 0;
+
+            font-size: 11px;
+        }
+
+
+        /* =========================================================
+           ERROR
+           ========================================================= */
+
+        .book-form-error {
+            margin-bottom: 18px;
+        }
+
+        .book-form-error .alert {
+            margin: 0;
+        }
+
+
+        /* =========================================================
+           FORM
+           ========================================================= */
+
+        .admin-book-form {
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+
+            gap: 17px;
+        }
+
+        .form-field {
+            min-width: 0;
+        }
+
+        .form-field-full {
+            grid-column: 1 / -1;
+        }
+
+        .form-field label {
+            display: block;
+
+            margin-bottom: 6px;
+
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .form-label-help {
+            display: block;
+
+            margin-top: 4px;
+
+            color: var(--text-muted);
+
+            font-size: 10px;
+            line-height: 1.4;
+        }
+
+        .admin-book-form input {
+            width: 100%;
+            max-width: none;
+        }
+
+        .form-actions {
+            grid-column: 1 / -1;
+
+            display: flex;
+            align-items: center;
+
+            gap: 9px;
+
+            padding-top: 4px;
+
+            flex-wrap: wrap;
+        }
+
+        .form-submit {
+            min-width: 145px;
+        }
+
+
+        /* =========================================================
+           SIDE PANEL
+           ========================================================= */
+
+        .book-form-side {
+            display: flex;
+            flex-direction: column;
+
+            gap: 14px;
+        }
+
+        .side-card {
+            padding: 18px;
+
+            background: var(--surface);
+
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+
+            box-shadow: var(--shadow-sm);
+        }
+
+        .side-card-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            width: 39px;
+            height: 39px;
+
+            margin-bottom: 11px;
+
+            background: var(--accent-light);
+
+            border: 1px solid var(--accent-border);
+            border-radius: 10px;
+
+            color: var(--accent-dark);
+
+            font-size: 16px;
+        }
+
+        .side-card h3 {
+            margin: 0 0 5px;
+
+            font-size: 14px;
+        }
+
+        .side-card p {
+            margin: 0;
+
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        .side-list {
+            padding: 0;
+            margin: 13px 0 0;
+
+            list-style: none;
+        }
+
+        .side-list li {
+            display: flex;
+            align-items: flex-start;
+
+            gap: 8px;
+
+            padding: 7px 0;
+
+            border-bottom: 1px solid var(--border-light);
+
+            color: var(--text-secondary);
+
+            font-size: 10px;
+            line-height: 1.45;
+        }
+
+        .side-list li:last-child {
+            padding-bottom: 0;
+
+            border-bottom: 0;
+        }
+
+        .side-list-check {
+            color: var(--primary);
+
+            font-weight: 800;
+        }
+
+
+        /* =========================================================
+           RESPONSIVE
+           ========================================================= */
+
+        @media (max-width: 900px) {
+
+            .book-form-navbar .navbar-inner {
+                flex-wrap: wrap;
+
+                padding-top: 10px;
+                padding-bottom: 10px;
+            }
+
+            .book-form-nav {
+                width: 100%;
+
+                justify-content: flex-start;
+            }
+
+            .book-form-hero {
+                align-items: flex-start;
+
+                flex-direction: column;
+            }
+
+            .book-form-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .book-form-side {
+                display: grid;
+
+                grid-template-columns:
+                    repeat(2, minmax(0, 1fr));
+            }
+        }
+
+
+        @media (max-width: 650px) {
+
+            .book-form-container {
+                padding-top: 22px;
+            }
+
+            .book-form-hero {
+                padding: 24px 21px;
+            }
+
+            .book-form-hero-actions {
+                width: 100%;
+            }
+
+            .book-form-hero-actions .btn {
+                width: 100%;
+            }
+
+            .book-form-card {
+                padding: 19px;
+            }
+
+            .admin-book-form {
+                grid-template-columns: 1fr;
+            }
+
+            .form-field-full,
+            .form-actions {
+                grid-column: auto;
+            }
+
+            .form-actions {
+                align-items: stretch;
+
+                flex-direction: column;
+            }
+
+            .form-actions .btn,
+            .form-actions button {
+                width: 100%;
+            }
+
+            .book-form-side {
+                grid-template-columns: 1fr;
+            }
+        }
+
+
+        @media (max-width: 480px) {
+
+            .book-form-navbar .navbar-brand span:last-child {
+                display: none;
+            }
+
+            .book-form-nav {
+                width: auto;
+
+                margin-left: auto;
+            }
+        }
+    </style>
+</head>
+
+
+<body class="book-form-page">
+
+<!-- =========================================================
+     NAVBAR
+     ========================================================= -->
+
+<nav
+        class="navbar book-form-navbar"
+        aria-label="Admin navigation">
+
+    <div class="navbar-inner">
+
+        <a
+                th:href="@{/}"
+                class="navbar-brand">
+
+            <span
+                    class="brand-icon"
+                    aria-hidden="true">
+                📚
+            </span>
+
+            <span>
+                Library Management System
+            </span>
+
+        </a>
+
+
+        <div class="book-form-nav">
+
+            <a
+                    th:href="@{/dashboard}"
+                    class="navbar-link">
+                Dashboard
+            </a>
+
+            <a
+                    th:href="@{/admin/books}"
+                    class="navbar-link active">
+                Books
+            </a>
+
+            <a
+                    th:href="@{/admin/users}"
+                    class="navbar-link">
+                Users
+            </a>
+
+        </div>
+
+    </div>
+
+</nav>
+
+
+<!-- =========================================================
+     MAIN
+     ========================================================= -->
+
+<main>
+
+    <div class="container book-form-container">
+
+
+        <!-- =====================================================
+             HERO
+             ===================================================== -->
+
+        <section class="book-form-hero">
+
+            <div class="book-form-hero-copy">
+
+                <div class="book-form-eyebrow">
+                    Administration
+                </div>
+
+
+                <h1 th:if="${!editMode}">
+                    Add New Book
+                </h1>
+
+                <h1 th:if="${editMode}">
+                    Edit Book
+                </h1>
+
+
+                <p th:if="${!editMode}">
+                    Add a new title to the library catalogue and
+                    define its author, ISBN, category and available quantity.
+                </p>
+
+                <p th:if="${editMode}">
+                    Update the selected book record while preserving
+                    the existing catalogue entry.
+                </p>
+
+            </div>
+
+
+            <div class="book-form-hero-actions">
+
+                <a
+                        th:href="@{/admin/books}"
+                        class="btn back-admin-button">
+
+                    ← Book Management
+
+                </a>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             CONTENT
+             ===================================================== -->
+
+        <div class="book-form-layout">
+
+
+            <!-- =================================================
+                 FORM
+                 ================================================= -->
+
+            <section class="book-form-card">
+
+
+                <div class="book-form-card-header">
+
+                    <h2 th:if="${!editMode}">
+                        Book Information
+                    </h2>
+
+                    <h2 th:if="${editMode}">
+                        Update Book Information
+                    </h2>
+
+
+                    <p th:if="${!editMode}">
+                        Enter the catalogue information for the new book.
+                    </p>
+
+                    <p th:if="${editMode}">
+                        Review and update the catalogue details below.
+                    </p>
+
+                </div>
+
+
+                <!-- =================================================
+                     ERROR
+                     ================================================= -->
+
+                <div
+                        th:if="${error}"
+                        class="book-form-error">
+
+                    <div
+                            class="alert alert-danger"
+                            role="alert">
+
+                        <span
+                                class="alert-icon"
+                                aria-hidden="true">
+                            ✕
+                        </span>
+
+                        <div>
+
+                            <strong>
+                                Unable to save book
+                            </strong>
+
+                            <p th:text="${error}">
+                                Something went wrong.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     ADD FORM
+                     ================================================= -->
+
+                <form
+                        th:if="${!editMode}"
+                        th:action="@{/admin/books/add}"
+                        th:object="${book}"
+                        method="post"
+                        class="admin-book-form">
+
+
+                    <!-- CSRF -->
+
+                    <input
+                            type="hidden"
+                            th:name="${_csrf.parameterName}"
+                            th:value="${_csrf.token}">
+
+
+                    <!-- Title -->
+
+                    <div class="form-field form-field-full">
+
+                        <label for="title">
+                            Book title
+                        </label>
+
+                        <input
+                                type="text"
+                                id="title"
+                                th:field="*{title}"
+                                placeholder="Enter the book title"
+                                autocomplete="off"
+                                required>
+
+                    </div>
+
+
+                    <!-- Author -->
+
+                    <div class="form-field">
+
+                        <label for="author">
+                            Author
+                        </label>
+
+                        <input
+                                type="text"
+                                id="author"
+                                th:field="*{author}"
+                                placeholder="Enter the author name"
+                                autocomplete="off"
+                                required>
+
+                    </div>
+
+
+                    <!-- ISBN -->
+
+                    <div class="form-field">
+
+                        <label for="isbn">
+                            ISBN
+                        </label>
+
+                        <input
+                                type="text"
+                                id="isbn"
+                                th:field="*{isbn}"
+                                placeholder="Enter the ISBN"
+                                autocomplete="off"
+                                required>
+
+                    </div>
+
+
+                    <!-- Category -->
+
+                    <div class="form-field">
+
+                        <label for="category">
+                            Category
+                        </label>
+
+                        <input
+                                type="text"
+                                id="category"
+                                th:field="*{category}"
+                                placeholder="Example: Fiction"
+                                autocomplete="off"
+                                required>
+
+                    </div>
+
+
+                    <!-- Quantity -->
+
+                    <div class="form-field">
+
+                        <label for="quantity">
+                            Quantity
+                        </label>
+
+                        <input
+                                type="number"
+                                id="quantity"
+                                th:field="*{quantity}"
+                                min="0"
+                                placeholder="0"
+                                required>
+
+                        <span class="form-label-help">
+                            Enter the number of copies available in the library.
+                        </span>
+
+                    </div>
+
+
+                    <!-- Actions -->
+
+                    <div class="form-actions">
+
+                        <button
+                                type="submit"
+                                class="btn btn-primary form-submit">
+
+                            ＋ Add Book
+
+                        </button>
+
+
+                        <a
+                                th:href="@{/admin/books}"
+                                class="btn btn-secondary">
+
+                            Cancel
+
+                        </a>
+
+                    </div>
+
+                </form>
+
+
+                <!-- =================================================
+                     EDIT FORM
+                     ================================================= -->
+
+                <form
+                        th:if="${editMode}"
+                        th:action="@{/admin/books/{id}/edit(id=${bookId})}"
+                        th:object="${book}"
+                        method="post"
+                        class="admin-book-form">
+
+
+                    <!-- CSRF -->
+
+                    <input
+                            type="hidden"
+                            th:name="${_csrf.parameterName}"
+                            th:value="${_csrf.token}">
+
+
+                    <!-- Title -->
+
+                    <div class="form-field form-field-full">
+
+                        <label for="titleEdit">
+                            Book title
+                        </label>
+
+                        <input
+                                type="text"
+                                id="titleEdit"
+                                th:field="*{title}"
+                                placeholder="Enter the book title"
+                                autocomplete="off"
+                                required>
+
+                    </div>
+
+
+                    <!-- Author -->
+
+                    <div class="form-field">
+
+                        <label for="authorEdit">
+                            Author
+                        </label>
+
+                        <input
+                                type="text"
+                                id="authorEdit"
+                                th:field="*{author}"
+                                placeholder="Enter the author name"
+                                autocomplete="off"
+                                required>
+
+                    </div>
+
+
+                    <!-- ISBN -->
+
+                    <div class="form-field">
+
+                        <label for="isbnEdit">
+                            ISBN
+                        </label>
+
+                        <input
+                                type="text"
+                                id="isbnEdit"
+                                th:field="*{isbn}"
+                                placeholder="Enter the ISBN"
+                                autocomplete="off"
+                                required>
+
+                    </div>
+
+
+                    <!-- Category -->
+
+                    <div class="form-field">
+
+                        <label for="categoryEdit">
+                            Category
+                        </label>
+
+                        <input
+                                type="text"
+                                id="categoryEdit"
+                                th:field="*{category}"
+                                placeholder="Example: Fiction"
+                                autocomplete="off"
+                                required>
+
+                    </div>
+
+
+                    <!-- Quantity -->
+
+                    <div class="form-field">
+
+                        <label for="quantityEdit">
+                            Quantity
+                        </label>
+
+                        <input
+                                type="number"
+                                id="quantityEdit"
+                                th:field="*{quantity}"
+                                min="0"
+                                placeholder="0"
+                                required>
+
+                        <span class="form-label-help">
+                            Adjust the available catalogue quantity as needed.
+                        </span>
+
+                    </div>
+
+
+                    <!-- Actions -->
+
+                    <div class="form-actions">
+
+                        <button
+                                type="submit"
+                                class="btn btn-primary form-submit">
+
+                            💾 Update Book
+
+                        </button>
+
+
+                        <a
+                                th:href="@{/admin/books}"
+                                class="btn btn-secondary">
+
+                            Cancel
+
+                        </a>
+
+                    </div>
+
+                </form>
+
+            </section>
+
+
+            <!-- =================================================
+                 SIDE INFORMATION
+                 ================================================= -->
+
+            <aside class="book-form-side">
+
+
+                <div class="side-card">
+
+                    <div
+                            class="side-card-icon"
+                            aria-hidden="true">
+                        📚
+                    </div>
+
+                    <h3>
+                        Catalogue quality
+                    </h3>
+
+                    <p>
+                        Accurate book information makes catalogue
+                        searching and library administration easier.
+                    </p>
+
+
+                    <ul class="side-list">
+
+                        <li>
+
+                            <span class="side-list-check">
+                                ✓
+                            </span>
+
+                            Use the complete book title.
+
+                        </li>
+
+                        <li>
+
+                            <span class="side-list-check">
+                                ✓
+                            </span>
+
+                            Enter the correct author and ISBN.
+
+                        </li>
+
+                        <li>
+
+                            <span class="side-list-check">
+                                ✓
+                            </span>
+
+                            Keep category names consistent.
+
+                        </li>
+
+                    </ul>
+
+                </div>
+
+
+                <div class="side-card">
+
+                    <div
+                            class="side-card-icon"
+                            aria-hidden="true">
+                        📦
+                    </div>
+
+                    <h3>
+                        Inventory quantity
+                    </h3>
+
+                    <p>
+                        The quantity field represents the number
+                        of copies currently available for the book record.
+                    </p>
+
+                </div>
+
+            </aside>
+
+        </div>
+
+    </div>
+
+</main>
+
+</body>
+
+</html>
